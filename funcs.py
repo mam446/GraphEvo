@@ -1,4 +1,5 @@
 # cython: profile=True
+
 from random import random,randrange,gauss,choice
 import math
 import numpy.linalg as lin
