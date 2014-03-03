@@ -28,6 +28,9 @@ class node(object):
     
     
     def evaluate(self):
+        rDown = []
+        for d in self.down:
+            rDown.append(d.evaluate())
         return self.function(rDown,self.params)
     
     def update(self,depth,state):

@@ -1,13 +1,13 @@
 # cython: profile=True
 import numpy as np
-
-
+import copy
+import genNode
 class adjacency(genNode.node):
     def __init__(self,parent,settings):
-        super(termNode,self).__init__(parent,settings,None,"Adj",0,{})
+        super(adjacency,self).__init__(parent,settings,None,"Adj",0,{})
 
     def evaluate(self):
-        return state.adj
+        return copy.deepcopy(self.state.adj)
 
 
     def update(self,depth,state):
@@ -17,7 +17,7 @@ class adjacency(genNode.node):
         return self.height
 
 
-    def randomize(self,state):
+    def randomize(self):
         return 
 
     def toDict(self):
@@ -26,10 +26,10 @@ class adjacency(genNode.node):
 
 class degree(genNode.node):
     def __init__(self,parent,settings):
-        super(termNode,self).__init__(parent,settings,None,"Deg",0,{})
+        super(degree,self).__init__(parent,settings,None,"Deg",0,{})
 
     def evaluate(self):
-        return state.deg
+        return copy.deepcopy(self.state.deg)
 
 
     def update(self,depth,state):
@@ -39,7 +39,7 @@ class degree(genNode.node):
         return self.height
 
 
-    def randomize(self,state):
+    def randomize(self):
         return 
 
     def toDict(self):
@@ -49,7 +49,7 @@ class degree(genNode.node):
 
 class identity(genNode.node):
     def __init__(self,parent,settings):
-        super(termNode,self).__init__(parent,settings,None,"I",0,{})
+        super(identity,self).__init__(parent,settings,None,"I",0,{})
 
     def evaluate(self):
         return np.identity(self.state.numNodes)
@@ -62,7 +62,7 @@ class identity(genNode.node):
         return self.height
 
 
-    def randomize(self,state):
+    def randomize(self):
         return 
 
     def toDict(self):

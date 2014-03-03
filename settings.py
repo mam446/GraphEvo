@@ -1,5 +1,5 @@
 # cython: profile=True
-
+import numpy as np
 
 
 
@@ -8,7 +8,7 @@
 class runSettings:
     def __init__(self,filename = None):
 
-        self.bbsaSettings = {}
+        self.gpSettings = {}
 
         self.seed = None
 
@@ -19,13 +19,13 @@ class runSettings:
         self.probConf = []
 
 
-        self.bbsaSettings['maxStartNodes'] = 15            
-        self.bbsaSettings['maxDepth'] = 5
-        self.bbsaSettings['mutateMax'] = 5
-        self.bbsaSettings['runs'] = 5
-        self.bbsaSettings['penalty'] = .001
+        self.gpSettings['maxStartNodes'] = 15            
+        self.gpSettings['maxDepth'] = 5
+        self.gpSettings['mutateMax'] = 5
+        self.gpSettings['runs'] = 5
+        self.gpSettings['penalty'] = .001
         #variation node
-        self.nodeSettings['scalarMult'] = {'scalar':{'value':0.0,'range':(0.0,50.0),'type':'float'}}
+        self.nodeSettings['scalarMult'] = {'scalar':{'value':0.0,'range':(-50.0,50.0),'type':'float'}}
 
         
         if filename:
@@ -33,10 +33,13 @@ class runSettings:
             d = eval(f.read())
             for key in d['nodeSettings']:
                 self.nodeSettings[key] = d['nodeSettings'][key]
-            for key in d['bbsaSettings']:            
-                self.bbsaSettings[key] = d['bbsaSettings'][key]
+            for key in d['gpSettings']:            
+                self.gpSettings[key] = d['gpSettings'][key]
 
             self.probConf = d['problems']
+        else:
+            self.probConf.append({'adj':np.matrix([[0,1,1],[1,0,0],[1,0,0]]),'deg':np.matrix([[2,0,0],[0,1,0],[0,0,1]])})
+
 
 
         self.solSettings = self.probConf[0]
@@ -47,3 +50,14 @@ class runSettings:
         self.probConf.append(x)
         self.solSettings = self.probConf[0]
         
+
+    def getAdj(self):
+        return self.solSettings['adj']
+
+
+    def getDeg(self):
+        return self.solSettings['deg']
+
+
+
+
