@@ -1,3 +1,4 @@
+
 # cython: profile=True
 
 from random import random,randrange,gauss,choice
