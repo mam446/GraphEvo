@@ -39,9 +39,9 @@ pop.sort()
 for p in pop:
     print p.fit
 
-maxEvals = 5000
+maxEvals = 500000
 cur = mu
-children = 40
+children = 50
 
 while cur<maxEvals:
     
