@@ -38,7 +38,7 @@ class runSettings:
 
             self.probConf = d['problems']
         else:
-            self.probConf.append({'adj':np.matrix([[0,1,1],[1,0,0],[1,0,0]]),'deg':np.matrix([[2,0,0],[0,1,0],[0,0,1]])})
+            self.probConf.append({'adj':np.matrix([[0,1,1],[1,0,0],[1,0,0]]),'deg':np.matrix([[2,0,0],[0,1,0],[0,0,1]]),'solution':5})
 
 
 

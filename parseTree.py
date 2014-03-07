@@ -2,6 +2,7 @@
 import copy
 import random
 import matrixOps
+import reducerOps
 import termNodes
 import state
 import settings
@@ -19,11 +20,18 @@ label =0
 
 
 
-
+reducers = []
 nodes = []
+
+reducers.extend(reducerOps.nodes)
 
 nodes.extend(matrixOps.nodes)
 
+
+def popNodes(node,a):
+    a.append(node)
+    for x in node.down:
+        popNodes(x,a)
 
 
 
@@ -45,13 +53,24 @@ class parseTree:
 
         self.state = state.state(settings)
 
+        self.fit = 0
 
         self.createRandom()
 
+    def duplicate(self):
+        x =copy.deepcopy(self)
 
+        global label
+        x.name = str(label)
+        label+=1
+
+        x.fitness = 0
+        x.update()
+        return x
 
     def createRandom(self,start = None):
-
+        if not start:
+            self.reducer = random.choice(reducers)
         size = random.randint(1,self.settings.gpSettings['maxStartNodes'])
         if start ==None:
             start = self.root
@@ -95,24 +114,76 @@ class parseTree:
 
 
     def evaluate(self):
-        return self.root.evaluate()
+        for prob in self.settings.probConf:
+            self.fit+=(prob['solution']-self.reducer(self.root.evaluate()))**2
+            self.update()
+            self.settings.nextProbConf() 
+        self.fit = self.fit**(.5)
+        return self.fit
 
 
     def update(self):
+        self.state = state.state(self.settings)
         self.depth = self.root.update(0,self.state)
 
     def toDict(self):
         return self.root.toDict()
 
 
+    def mutate(self):
+        x = self.duplicate()
+        n = x.randomNode(True)
+        
+        while n!="reducer" and not n.down:
+            n = x.randomNode()
+        if n=="reducer":
+            x.reducer = random.choice(reducers)
+        x.createRandom(n)
+        x.update()
+        x.count()
+        return x
+
+    def mate(self,other):
+        x = self.duplicate()
+        y = other.duplicate()
+
+        xn = x.randomNode()
+        yn = y.randomNode()
+
+        xp = xn.parent
+        yp = yn.parent
+
+        if yp is not None:
+            if yn==yp.down[0]:
+                yp.down[0]=xn
+            else:
+                yp.down[1] = xn
+        else:
+            y.root = xn
+
+        if xp is not None:
+            if xn ==xp.down[0]:
+                xp.down[0] = yn
+            else:
+                xp.down[1] = yn
+        else:
+            x.root = yn
+
+        xn.parent = yp
+        yn.parent = xp
+        x.update()
+        y.update()
+        x.count()
+        y.count()
+        return x,y
 
 
-
-
-
-
-
-
+    def randomNode(self,inc=False):
+        z = []
+        z.append("reducer")
+        popNodes(self.root,z)
+        n = random.choice(z)
+        return n
 
 
 
