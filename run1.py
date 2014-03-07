@@ -12,7 +12,7 @@
         'maxDepth':5,
         'mutateMax':5,
         'runs':5,
-        'penalty':.001,
+        'penalty':.1,
     },
     'nodeSettings':
     {

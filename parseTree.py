@@ -29,7 +29,8 @@ nodes.extend(matrixOps.nodes)
 
 
 def popNodes(node,a):
-    a.append(node)
+    if node.down:
+        a.append(node)
     for x in node.down:
         popNodes(x,a)
 
@@ -118,7 +119,7 @@ class parseTree:
             self.fit+=(prob['solution']-self.reducer(self.root.evaluate()))**2
             self.update()
             self.settings.nextProbConf() 
-        self.fit = self.fit**(.5)
+        self.fit = self.fit**(.5)+ self.settings.gpSettings['penalty']*self.size
         return self.fit
 
 
@@ -126,9 +127,11 @@ class parseTree:
         self.state = state.state(self.settings)
         self.depth = self.root.update(0,self.state)
 
-    def toDict(self):
-        return self.root.toDict()
+    def toStr(self):
+        return str(self.reducer)+str(self.root.toDict())
 
+    def toDict(self):
+        return {str(self.reducer):self.root.toDict()}
 
     def mutate(self):
         x = self.duplicate()
@@ -136,8 +139,12 @@ class parseTree:
         
         while n!="reducer" and not n.down:
             n = x.randomNode()
+        
         if n=="reducer":
             x.reducer = random.choice(reducers)
+            x.update()
+            x.count()
+            return x
         x.createRandom(n)
         x.update()
         x.count()
@@ -180,7 +187,8 @@ class parseTree:
 
     def randomNode(self,inc=False):
         z = []
-        z.append("reducer")
+        if inc:
+            z.append("reducer")
         popNodes(self.root,z)
         n = random.choice(z)
         return n
@@ -190,8 +198,8 @@ class parseTree:
 
 
 
-
-
+    def __gt__(self,other):
+        return self.fit>other.fit
 
 
 
