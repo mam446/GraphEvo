@@ -2,7 +2,9 @@
 import copy
 import random
 import matrixOps
+import graphOps
 import reducerOps
+import graphReducerOps
 import termNodes
 import state
 import settings
@@ -24,8 +26,10 @@ reducers = []
 nodes = []
 
 reducers.extend(reducerOps.nodes)
+reducers.extend(graphReducerOps.nodes)
 
 nodes.extend(matrixOps.nodes)
+nodes.extend(graphOps.nodes)
 
 
 def popNodes(node,a):
