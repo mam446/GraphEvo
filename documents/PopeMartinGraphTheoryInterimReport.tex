@@ -1,0 +1,44 @@
+\documentclass{article}
+
+\begin{document}
+
+\title{Evolving Random Graph Generating Algorithms}
+
+\author{
+Pope, Aaron\\
+\texttt{aaron.pope@mst.edu}
+\and
+Martin, Matthew\\
+\texttt{mam446@mst.edu}
+}
+
+\maketitle
+
+\section{Introduction}
+
+The goal of this research is to use Genetic Programming (GP) techniques to evolve algorithms which generate random graphs that satisfy various conditions. Evolutionary Computing (EC) uses a biologically inspired process to solve a problem by generating a population of potential solutions and selecting the best among them to participate in procreation to create more solutions. This process continues through multiple generations until certain termination criteria are met. GP is a field of EC in which the solutions sought are programs themselves. The candidate programs can be represented as parse trees in which the internal nodes represent operations on the input received from the children nodes and the leaf nodes are chosen from the problem's input.
+
+Traditional GP has several stochastic components. The population is initialized with randomly created solutions, offspring inherit a random selection of attributes from each parent and each offspring has a chance of undergoing a random mutation. Because of these stochastic elements, a GP algorithm will explore possible solutions that might seem counterintuitive to a human developer. While these non-obvious choices are usually inferior, they can, on occasion, lead to a breakthrough in computational efficiency or solution accuracy.
+
+The main challenge in evolving graph algorithms will be creating a set of operations which can be combined to create a candidate solution. The operation set needs to contain a variety of methods in order for the GP to create solutions to different types of problems. However, if the set grows too large, the search space of potential solutions explodes, making a search infeasible. Therefore, the goal is to find a minimal set of operations which are crucial to solving a specific problem or family of problems.
+
+Another challenge is measuring the quality of a candidate solution when determining which solutions will survive and procreate. *Talk about goodness-of-fit to random graph models and possibly METIS stuff*
+
+\section{Related Work}
+blah
+
+\section{Approach}
+
+*This stuff is untouched from the synopsis*
+
+In our genetic program the representation of the graph that we chose is a $n \times n$ matrix. Each node in the parse tree will take one or more $n \times n$ matrices and return a single $n \times n$ matrix. By making this restriction to $n \times n$ matrices we don't have to worry about the typing problem in standard GPs.
+When evolving the graph algorithm there are two main kinds of nodes in the parse tree, terminal nodes, and interior nodes. The terminal nodes are the leaves of the tree and in general are the input to the algorithm. We currently have three different terminal nodes, the adjacency matrix representation of the graph, the degree matrix of the graph, and the identity matrix. More terminal nodes may be added in the future if it is deemed necessary. The interior nodes are broken up into two different categories, matrix operations and graph operations. Matrix operations include operations such as adding or multiplying matrices. Graph operations are operations such as finding the minimal spanning tree or the complement of a graph. Using a combination of matrix and graph operations will give the GP a large search space to solve problems in counterintuitive ways.
+
+The nodes described above will be structured into a parse tree and evaluated in post-order fashion. This means that the GP will start at the terminal nodes and evaluate up the tree until the root node returns a matrix. This matrix is then put through a reducer operation that takes a matrix and returns a value. Some examples of these reduction operations are taking the determinant of the matrix or finding the number of components of the graph.
+
+The best parse tree algorithms we find through evolution will be translated into executable programs. We will compare the performance of our results to current approximation algorithms (if any exist) in terms of accuracy and efficiency. Though our long-term goal is to find algorithms that outperform the current alternatives, the present short-term goal is to provide a proof of concept for evolving graph algorithms using GP techniques.
+
+
+\end{document}
+
+
