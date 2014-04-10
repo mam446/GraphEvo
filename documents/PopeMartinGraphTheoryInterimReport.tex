@@ -1,6 +1,7 @@
 \documentclass{article}
 
 \usepackage{graphicx}
+\usepackage{multicols}
 
 \begin{document}
 
@@ -15,6 +16,8 @@ Martin, Matthew\\
 }
 
 \maketitle
+
+\begin{multicols}{2}
 
 \section{Introduction}
 
@@ -40,8 +43,8 @@ If an optimal fitness value is known, potential solutions can be compared to thi
 
 The method of evaluating random graph generating programs will depend on the type of problem the GP used to solve. If a program is sought which produces graphs that adhere to a specific random graph model, then the program can be used to generate a set of graphs which are evaluated using a goodness of fit test to determine how well they fit the desired model. If the goal is instead to generate graphs which exhibit some feature, the program can be evaluated by determining the rate of occurence of these features in the graphs it produces. Programs produce graphs that adhere better to the intended model or have a higher rate of occurence for desirable features will have higher relative fitness values.
 
-\section{Related Work}
-blah
+% \section{Related Work}
+%blah
 
 \section{Motivation}
 
@@ -62,10 +65,12 @@ To evaluate these parse trees random graphs will be generated using the method d
 The GP will be using standard GP operators along with other operators to help with a local search of the parse trees. The standard GP operators include sub-tree crossover and sub-tree mutation. The new operator is an alternate mutation operator which randomly selects a node of the parse tree and randomly changes the parameters of the operation contained in that node.
 
 \begin{figure}
-  \includegraphics[scale=0.8]{RandomGraphExample}
+  \includegraphics[scale=0.7]{RandomGraphExample}
   \caption{Example Random Graph Generating Parse Tree}
   \label{fig:example}
 \end{figure}
+
+\end{multicols}
 
 \end{document}
 
