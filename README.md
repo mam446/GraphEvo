@@ -1,4 +1,0 @@
-GraphEvo
-========
-
-Evolving graph algorithms
