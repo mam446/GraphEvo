@@ -40,29 +40,14 @@ If an optimal fitness value is known, potential solutions can be compared to thi
 
 The method of evaluating random graph generating programs will depend on the type of problem the GP used to solve. If a program is sought which produces graphs that adhere to a specific random graph model, then the program can be used to generate a set of graphs which are evaluated using a goodness of fit test to determine how well they fit the desired model. If the goal is instead to generate graphs which exhibit some feature, the program can be evaluated by determining the rate of occurence of these features in the graphs it produces. Programs produce graphs that adhere better to the intended model or have a higher rate of occurence for desirable features will have higher relative fitness values.
 
- \section{Related Work}
-There have been many works done on evolving algorithms to do a specific 
-task~\cite{Lourenco:12,Martin:13}. However, there have been no applications of evolving
-random graph generating algorithms or graph algorithms in general. Though the application of 
-the work in evolving algorithms is different from the goals of this paper, the concepts that
-those algorithms are based on can be used in this application. These papers use Koza style 
-GP~\cite{Koza:92} and Gramatical Evolution~\cite{Ryan:98}. In this paper, Koza
-style GP will be used to construct the random graph generating algorithm. 
+% \section{Related Work}
+%blah
 
 \section{Motivation}
 
 The goal of this research is to develop a general purpose genetic algorithm which evolves programs that generate random graphs that satisfy certain constraints. This would provide a source of material that could be used to facilitate further research in various areas of graph theory. For instance, if researchers want to examine the efficiency of a new networking algorithm when applied to scale free networks, a program which generates power law distribution graphs can be evolved and used to generate test graphs. The versatility of the genetic algorithm approach will allow this to be done even when the desired features of a random graph are difficult to express within a random graph model.
 
 \section{Methodology}
-
-\begin{figure}
-\begin{centering}
-  \includegraphics[scale=0.6]{RandomGraphExample}
-  \caption{Example Random Graph Generating Parse Tree}
-  \label{fig:example}
-\end{centering}
-\end{figure}
-
 
 This paper discusses a method using GP to evolve an algorithm that generates a random graph of with a specified nature.  The method proposed uses Koza style GP to evolve a post-ordered parse tree structure that will represent the algorithm. Most random-graph generating algorithms repeat a node adding phase $n$ times to create a random graph of size $n$. Our algorithm takes advantage of this repetitive nature of random-graph algorithms in such a way that it only evolves the method for adding a node and its connections. In this phase, the parse tree decides which nodes will be adjacent to the new node.
 
@@ -76,11 +61,22 @@ To evaluate these parse trees random graphs will be generated using the method d
 
 The GP will be using standard GP operators along with other operators to help with a local search of the parse trees. The standard GP operators include sub-tree crossover and sub-tree mutation. The new operator is an alternate mutation operator which randomly selects a node of the parse tree and randomly changes the parameters of the operation contained in that node.
 
+\begin{figure}
+  \includegraphics[scale=0.7]{RandomGraphExample}
+  \caption{Example Random Graph Generating Parse Tree}
+  \label{fig:example}
+\end{figure}
 
+\begin{thebibliography}{9}
 
-\bibliographystyle{abbrv}
-\bibliography{sigproc} 
+\bibitem{lamport94}
+  Leslie Lamport,
+  \emph{\LaTeX: A Document Preparation System}.
+  Addison Wesley, Massachusetts,
+  2nd Edition,
+  1994.
 
+\end{thebibliography}
 
 \end{document}
 
