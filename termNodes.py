@@ -2,70 +2,46 @@
 import numpy as np
 import copy
 import genNode
-class adjacency(genNode.node):
+
+
+class allNodes(genNode.node):
     def __init__(self,parent,settings):
-        super(adjacency,self).__init__(parent,settings,None,"Adj",0,{})
+        super(allNodes,self).__init__(parent,settings,None,"allNodes",0,{})
 
     def evaluate(self):
-        return copy.deepcopy(self.state.adj)
+        return set(range(len(self.state.nodeList)))
 
-
+    
     def update(self,depth,state):
         self.depth = depth
         self.height = 0
         self.state = state
         return self.height
 
-
     def randomize(self):
         return 
-
+    
     def toDict(self):
-        return "Adj"
+        return "allNodes"
 
-
-class degree(genNode.node):
+class empty(genNode.node):
     def __init__(self,parent,settings):
-        super(degree,self).__init__(parent,settings,None,"Deg",0,{})
+        super(empty,self).__init__(parent,settings,None,"empty",0,{})
 
     def evaluate(self):
-        return copy.deepcopy(self.state.deg)
+        return set()
 
-
+    
     def update(self,depth,state):
         self.depth = depth
         self.height = 0
         self.state = state
         return self.height
 
-
     def randomize(self):
         return 
-
+    
     def toDict(self):
-        return "Deg"
+        return "empty"
 
-
-
-class identity(genNode.node):
-    def __init__(self,parent,settings):
-        super(identity,self).__init__(parent,settings,None,"I",0,{})
-
-    def evaluate(self):
-        return np.identity(self.state.numNodes)
-
-
-    def update(self,depth,state):
-        self.depth = depth
-        self.height = 0
-        self.state = state
-        return self.height
-
-
-    def randomize(self):
-        return 
-
-    def toDict(self):
-        return "I"
-
-nodes = [adjacency,degree,identity]
+nodes = [allNodes,empty]

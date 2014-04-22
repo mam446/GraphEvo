@@ -4,7 +4,29 @@ class state:
     def __init__(self,settings):
         self.terms = termNodes.nodes
         self.settings = settings
-        self.adj = settings.getAdj()
-        self.deg = settings.getDeg()
+        self.nodeList = []
 
-        self.numNodes = len(self.deg)
+        self.degreeList = []
+
+    def addNode(self,nodes):
+        self.nodeList.append(list(nodes))
+        for n in nodes:
+            self.nodeList[n].append(len(self.nodeList)-1)
+    
+    def add2Node(self,nodes,j):
+        self.nodeList[j] = nodes 
+
+    def bigGraph(self,size):
+        self.nodeList=[[] for i in xrange(size)]
+    
+
+    def calcDegree(self):
+        x = map(len,self.nodeList)
+        self.degreeList = x
+        return x
+
+
+    def reset(self):
+        self.nodeList = []
+
+

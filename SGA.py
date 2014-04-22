@@ -35,11 +35,11 @@ while i<mu:
     pop.append(x)
     print x.fit
     i+=1
-pop.sort()
+pop.sort(reverse=True)
 for p in pop:
     print p.fit
 
-maxEvals = 500000
+maxEvals = 5000
 cur = mu
 children = 50
 
@@ -68,13 +68,14 @@ while cur<maxEvals:
             c+=1
 
     pop.extend(childs)
-    pop.sort()
+    pop.sort(reverse=True)
     pop = pop[:mu]
     cur+=children
 
     print cur,pop[0].fit
     print pop[0].toDict()
 
+pop[0].report()
 print
 print
 print "Best"

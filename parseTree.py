@@ -1,14 +1,12 @@
-
+import pylab
 import copy
 import random
-import matrixOps
-import graphOps
-import reducerOps
-import graphReducerOps
+import selectionNodes
+import setNodes
 import termNodes
 import state
 import settings
-
+import numpy
 
 
 
@@ -22,14 +20,11 @@ label =0
 
 
 
-reducers = []
 nodes = []
 
-reducers.extend(reducerOps.nodes)
-reducers.extend(graphReducerOps.nodes)
 
-nodes.extend(matrixOps.nodes)
-nodes.extend(graphOps.nodes)
+nodes.extend(selectionNodes.nodes)
+nodes.extend(setNodes.nodes)
 
 
 def popNodes(node,a):
@@ -73,9 +68,12 @@ class parseTree:
         x.update()
         return x
 
+    def createER(self):
+        self.root = selectionNodes.pSelect(None,self.settings)
+        self.root.down = [termNodes.allNodes(self.root,self.settings)]
+        self.root.params['p']['value'] = .001
+        self.update()
     def createRandom(self,start = None):
-        if not start:
-            self.reducer = random.choice(reducers)
         size = random.randint(1,self.settings.gpSettings['maxStartNodes'])
         if start ==None:
             start = self.root
@@ -117,38 +115,80 @@ class parseTree:
     def fillTerms(self):
         self.root.fillTerms(self.state)     
 
-
-    def evaluate(self):
-        for prob in self.settings.probConf:
-            self.fit+=(prob['solution']-self.reducer(self.root.evaluate()))**2
-            self.update()
-            self.settings.nextProbConf() 
-        self.fit = self.fit**(.5)+ self.settings.gpSettings['penalty']*self.size
+    def eval2(self):
+        data = []
+        for i in xrange(self.settings.gpSettings['runs']):
+            self.state.bigGraph(self.settings.gpSettings['maxSize'])
+            for j in xrange(self.settings.gpSettings['maxSize']):
+                add = self.root.evaluate()
+                self.state.add2Node(add,j)
+            print i
+            data.extend(self.state.calcDegree())
+            self.state.reset()
+        print data
+        n,bins,patches = pylab.hist(data,1+max(data)-min(data),histtype='stepfilled')
+        pylab.setp(patches,'facecolor','g','alpha',0.75)
+        print bins
+        print n
+        print patches
+        pylab.ylim([0,max(n)])
+        pylab.show()
         return self.fit
 
+    def evaluate(self):
+        self.fit = 0
+        data = []
+        for i in xrange(self.settings.gpSettings['runs']):
+            for j in xrange(self.settings.gpSettings['maxSize']):
+                add = self.root.evaluate()
+                self.state.addNode(add)
+            data.extend(self.state.calcDegree())
+            self.state.reset()
+        self.fit=numpy.std(data) 
+        
+        #n,bins,patches = pylab.hist(data,1+max(data)-min(data),histtype='stepfilled')
+        #pylab.setp(patches,'facecolor','g','alpha',0.75)
+        #print patches
+        #pylab.ylim([0,max(n)])
+        #pylab.show()
+        self.fit-=self.size*self.settings.gpSettings['penalty']
+        
+        return self.fit
+
+    def report(self):
+        self.fit = 0
+        data = []
+        for i in xrange(self.settings.gpSettings['runs']):
+            for j in xrange(self.settings.gpSettings['maxSize']):
+                add = self.root.evaluate()
+                self.state.addNode(add)
+            data.extend(self.state.calcDegree())
+            self.state.reset()
+        self.fit=numpy.std(data) 
+        
+        n,bins,patches = pylab.hist(data,1+max(data)-min(data),histtype='stepfilled')
+        pylab.setp(patches,'facecolor','g','alpha',0.75)
+        print n
+        print bins
+        print patches
+        pylab.ylim([0,max(n)])
+        pylab.show()
+        return self.fit
 
     def update(self):
         self.state = state.state(self.settings)
         self.depth = self.root.update(0,self.state)
 
     def toStr(self):
-        return str(self.reducer)+str(self.root.toDict())
+        return str(self.root.toDict())
 
     def toDict(self):
-        return {str(self.reducer):self.root.toDict()}
+        return self.root.toDict()
 
     def mutate(self):
         x = self.duplicate()
         n = x.randomNode(True)
         
-        while n!="reducer" and not n.down:
-            n = x.randomNode()
-        
-        if n=="reducer":
-            x.reducer = random.choice(reducers)
-            x.update()
-            x.count()
-            return x
         x.createRandom(n)
         x.update()
         x.count()
@@ -191,8 +231,6 @@ class parseTree:
 
     def randomNode(self,inc=False):
         z = []
-        if inc:
-            z.append("reducer")
         popNodes(self.root,z)
         n = random.choice(z)
         return n

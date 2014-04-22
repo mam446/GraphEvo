@@ -47,6 +47,8 @@ class node(object):
                 self.params[p]['value'] =  random.randint(self.params[p]['range'][0],self.params[p]['range'][1])
             elif self.params[p]['type'] == 'float':
                 self.params[p]['value'] = random.random()*(self.params[p]['range'][1]-self.params[p]['range'][0])+self.params[p]['range'][0]
+            elif self.params[p]['type']== 'choice':
+                self.params[p]['value'] = random.choice(self.params[p]['range'])
             else:
                 raise "Error: No type"
 
