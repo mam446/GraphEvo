@@ -27,6 +27,8 @@ def intersection(rDown,params={}):
 def difference(rDown,params={}):
     return rDown[0].difference(rDown[1])
 
+def symDifference(rDown,params={}):
+    return rDown[0].symmetric_difference(rDown[1])
 
 def kTourn(rDown,params={}):
     data = {}

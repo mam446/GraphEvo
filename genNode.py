@@ -72,3 +72,36 @@ class node(object):
         for d in self.down:
             t+=d.count()
         return t
+
+
+    def makeProg(self,numTab,var):
+        tab = "    "
+        indent = ""
+        for i in xrange(numTab):
+            indent+=tab
+        prog = ""
+        dList = "["
+        for d in xrange(len(self.down)):
+            prog+=self.down[d].makeProg(numTab,var+str(d))
+            dList+="x"+var+str(d)+","
+        if self.name!="randInd":
+            dList = dList[:-1]+"]"
+        else:
+            dList = '[],sol'
+        pList = "{"
+        for p in self.params:
+            if p=='weight':
+                continue
+            if p=='data':
+                pList+="\'data\':{state.calcDegree()},"
+                continue
+            if self.params[p]['type']=='choice':
+                pList+="\'"+p+"\':{'value':\'"+self.params[p]['value']+"\'},"
+                continue
+            pList+="\'"+p+"\':{'value':"+str(self.params[p]['value'])+"},"
+        if pList!="{":
+            pList = pList[:-1]+"}"
+            prog+="x"+var+" = "+self.name+"("+dList+","+pList+")\n"+indent
+        else:
+            prog+="x"+var+" = "+self.name+"("+dList+")\n"+indent
+        return prog

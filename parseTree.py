@@ -7,9 +7,9 @@ import termNodes
 import state
 import settings
 import numpy
-
-
-
+import metis
+import networkx as nx
+import pygraphviz as pgv
 
 
 global label
@@ -122,17 +122,17 @@ class parseTree:
             for j in xrange(self.settings.gpSettings['maxSize']):
                 add = self.root.evaluate()
                 self.state.add2Node(add,j)
-            print i
+            self.fit+=self.metisEval()
             data.extend(self.state.calcDegree())
             self.state.reset()
-        print data
-        n,bins,patches = pylab.hist(data,1+max(data)-min(data),histtype='stepfilled')
-        pylab.setp(patches,'facecolor','g','alpha',0.75)
-        print bins
-        print n
-        print patches
-        pylab.ylim([0,max(n)])
-        pylab.show()
+        
+        #n,bins,patches = pylab.hist(data,1+max(data)-min(data),histtype='stepfilled')
+        #pylab.setp(patches,'facecolor','g','alpha',0.75)
+        #print patches
+        #pylab.ylim([0,max(n)])
+        #pylab.show()
+        self.fit/=self.settings.gpSettings['runs']
+        self.fit-=self.size*self.settings.gpSettings['penalty']
         return self.fit
 
     def evaluate(self):
@@ -142,28 +142,44 @@ class parseTree:
             for j in xrange(self.settings.gpSettings['maxSize']):
                 add = self.root.evaluate()
                 self.state.addNode(add)
+            self.fit+=self.metisEval()
             data.extend(self.state.calcDegree())
             self.state.reset()
-        self.fit=numpy.std(data) 
         
         #n,bins,patches = pylab.hist(data,1+max(data)-min(data),histtype='stepfilled')
         #pylab.setp(patches,'facecolor','g','alpha',0.75)
         #print patches
         #pylab.ylim([0,max(n)])
         #pylab.show()
+        self.fit/=self.settings.gpSettings['runs']
         self.fit-=self.size*self.settings.gpSettings['penalty']
         
         return self.fit
+
+
+    def metisEval(self):
+        G = nx.Graph()
+        for node in xrange(len(self.state.nodeList)):
+            G.add_node(node)
+            for edge in self.state.nodeList[node]:
+                G.add_edge(node,edge)
+        (edgecuts, parts) = metis.part_graph(G,self.settings.solSettings['parts'])
+        mod = 0
+        if nx.is_connected(G):
+            mod = 1
+            return mod*(float(edgecuts))-G.number_of_edges()
+        return -99999999999999999
+
 
     def report(self):
         self.fit = 0
         data = []
         for i in xrange(self.settings.gpSettings['runs']):
+            self.state.reset()
             for j in xrange(self.settings.gpSettings['maxSize']):
                 add = self.root.evaluate()
                 self.state.addNode(add)
             data.extend(self.state.calcDegree())
-            self.state.reset()
         self.fit=numpy.std(data) 
         
         n,bins,patches = pylab.hist(data,1+max(data)-min(data),histtype='stepfilled')
@@ -172,8 +188,30 @@ class parseTree:
         print bins
         print patches
         pylab.ylim([0,max(n)])
+        G = nx.Graph()
+        for node in xrange(len(self.state.nodeList)):
+            G.add_node(node)
+            for edge in self.state.nodeList[node]:
+                G.add_edge(node,edge)
+        nx.write_dot(G,self.name+".dot")
+        X = pgv.AGraph(self.name+".dot") 
+        X.layout(prog='neato',args="-Goverlap=false -Gscale=.01")
+        X.draw(self.name+".png") 
         pylab.show()
         return self.fit
+
+
+    def makeProg(self):
+        tab = "    "
+        indent = tab*1
+
+        prog = "\n\n"
+        prog+= "def selectNodes(state):\n"+indent
+        prog+=self.root.makeProg(1,"")
+        prog+="return x\n"+indent
+        f = open(self.name+"-prog.py",'w+')
+        f.write(prog)
+        f.close()
 
     def update(self):
         self.state = state.state(self.settings)

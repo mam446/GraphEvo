@@ -26,7 +26,16 @@ class difference(genNode.node):
     def toDict(self):
         return {"difference":[self.down[0].toDict(),self.down[1].toDict()]}
 
-nodes = [union,intersection,difference]
+
+class symDifference(genNode.node):
+    def __init__(self,parent,settings):
+        super(symDifference,self).__init__(parent,settings,funcs.symDifference,"symDifference",2,{})
+
+    def toDict(self):
+        return {"symDifference":[self.down[0].toDict(),self.down[1].toDict()]}
+
+
+nodes = [union,intersection,difference,symDifference]
 
 
 

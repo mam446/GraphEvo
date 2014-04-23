@@ -23,8 +23,8 @@ class runSettings:
         self.gpSettings['maxDepth'] = 5
         self.gpSettings['mutateMax'] = 5
         self.gpSettings['runs'] = 5
-        self.gpSettings['penalty'] = .1
-        self.gpSettings['maxSize'] = 1000
+        self.gpSettings['penalty'] = 1
+        self.gpSettings['maxSize'] = 100
         #variation node
         self.nodeSettings['scalarMult'] = {'scalar':{'value':0.0,'range':(-50.0,50.0),'type':'float'}}
         self.nodeSettings['randSubset'] = {'num':{'value':0,'range':(1,100),'type':'int'}}
@@ -45,7 +45,7 @@ class runSettings:
 
             self.probConf = d['problems']
         else:
-            self.probConf.append([])
+            self.probConf.append({'parts':2})
 
 
 

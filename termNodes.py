@@ -24,6 +24,14 @@ class allNodes(genNode.node):
     def toDict(self):
         return "allNodes"
 
+    def makeProg(self,numTab,var):
+        indent=""
+        tab="    "
+        indent = tab*numTab
+        prog = "x"+var+" = set(range(len(state.nodeList)))\n"+indent
+        return prog
+
+
 class empty(genNode.node):
     def __init__(self,parent,settings):
         super(empty,self).__init__(parent,settings,None,"empty",0,{})
@@ -43,5 +51,28 @@ class empty(genNode.node):
     
     def toDict(self):
         return "empty"
+    
+    def makeProg(self,numTab,var):
+        tab = "    "
+        indent = tab*numTab
+        return "x"+var+" = set()\n"+indent
+
+
+
 
 nodes = [allNodes,empty]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
