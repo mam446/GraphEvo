@@ -43,6 +43,7 @@ maxEvals = 5000
 cur = mu
 children = 50
 
+pop[0].report()
 while cur<maxEvals:
     
     c = 0
@@ -51,7 +52,7 @@ while cur<maxEvals:
         choice = random.choice([0,1,2])
         rate = random.random()
         
-        if c+1!=children and rate<.3:
+        if c+1!=children and rate<.35:
             mom = ktourn(pop,k)
             dad = ktourn(pop,k)
             x,y = mom.mate(dad)
@@ -61,21 +62,32 @@ while cur<maxEvals:
             y.evaluate()
             childs.append(y)
             c+=1
-        else:
+        elif rate<.70:
             x=ktourn(pop,k).mutate()
             x.evaluate()
             childs.append(x)
             c+=1
-
+        else:
+            x = ktourn(pop,k).altMutate()
+            x.evaluate()
+            childs.append(x)
+            c+=1
     pop.extend(childs)
     pop.sort(reverse=True)
     pop = pop[:mu]
     cur+=children
 
-    print cur,pop[0].fit
-    print pop[0].toDict()
+    ave = 0
+    for p in pop:
+        ave+=p.fit
+    ave/=len(pop)
 
-pop[0].report()
+
+    print cur,pop[0].fit,ave
+    print pop[0].toDict()
+    pop[0].report()
+pop[0].report(True)
+pop[0].makeProg()
 print
 print
 print "Best"

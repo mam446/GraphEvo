@@ -43,6 +43,8 @@ class node(object):
 
     def randomize(self):
         for p in self.params:
+            if p=='data':
+                continue
             if self.params[p]['type'] == 'int':
                 self.params[p]['value'] =  random.randint(self.params[p]['range'][0],self.params[p]['range'][1])
             elif self.params[p]['type'] == 'float':

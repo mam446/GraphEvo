@@ -8,6 +8,7 @@ import numpy.linalg as lin
 import numpy
 
 def pSelect(rDown,params={}):
+    cdef int i
     ret = set()
     cur = rDown[0]
     for i in xrange(len(cur)):
@@ -31,6 +32,7 @@ def symDifference(rDown,params={}):
     return rDown[0].symmetric_difference(rDown[1])
 
 def kTourn(rDown,params={}):
+    cdef int i,n,c
     data = {}
     cur = rDown[0]
     ret = set()

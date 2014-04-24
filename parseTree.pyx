@@ -126,16 +126,12 @@ class parseTree:
             data.extend(self.state.calcDegree())
             self.state.reset()
         
-        #n,bins,patches = pylab.hist(data,1+max(data)-min(data),histtype='stepfilled')
-        #pylab.setp(patches,'facecolor','g','alpha',0.75)
-        #print patches
-        #pylab.ylim([0,max(n)])
-        #pylab.show()
         self.fit/=self.settings.gpSettings['runs']
         self.fit-=self.size*self.settings.gpSettings['penalty']
         return self.fit
 
     def evaluate(self):
+        cdef int i,j
         self.fit = 0
         data = []
         for i in xrange(self.settings.gpSettings['runs']):
@@ -146,11 +142,6 @@ class parseTree:
             data.extend(self.state.calcDegree())
             self.state.reset()
         
-        #n,bins,patches = pylab.hist(data,1+max(data)-min(data),histtype='stepfilled')
-        #pylab.setp(patches,'facecolor','g','alpha',0.75)
-        #print patches
-        #pylab.ylim([0,max(n)])
-        #pylab.show()
         self.fit/=self.settings.gpSettings['runs']
         self.fit-=self.size*self.settings.gpSettings['penalty']
         
@@ -167,11 +158,11 @@ class parseTree:
         mod = 0
         if nx.is_connected(G):
             mod = 1
-            return mod*(float(edgecuts))-G.number_of_edges()
+            return float(edgecuts)-G.number_of_edges()
         return -99999999999999999
 
 
-    def report(self):
+    def report(self,plot=False):
         self.fit = 0
         data = []
         for i in xrange(self.settings.gpSettings['runs']):
@@ -197,7 +188,8 @@ class parseTree:
         X = pgv.AGraph(self.name+".dot") 
         X.layout(prog='neato',args="-Goverlap=false -Gscale=.01")
         X.draw(self.name+".png") 
-        pylab.show()
+        if plot:
+            pylab.show()
         return self.fit
 
 
@@ -282,4 +274,18 @@ class parseTree:
         return self.fit>other.fit
 
 
+    def altMutate(self):
+        x = self.duplicate()
+        t = None
+        i = 0
+        while not t:
+            n =x.randomNode(True)
+            t = n.params
+            i+=1
+            if i> self.size:
+                n = self.root
+                break
+        n.randomize()
+        
+        return x
 
