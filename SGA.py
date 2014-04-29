@@ -42,7 +42,7 @@ for p in pop:
 maxEvals = 5000
 cur = mu
 children = 50
-
+sk = 5
 pop[0].report()
 while cur<maxEvals:
     
@@ -73,9 +73,13 @@ while cur<maxEvals:
             childs.append(x)
             c+=1
     pop.extend(childs)
+    x = []
+    for i in xrange(mu):
+        x.append(ktourn(pop,sk))
+    pop = x
     pop.sort(reverse=True)
-    pop = pop[:mu]
     cur+=children
+    #pop = pop[:mu]
 
     ave = 0
     for p in pop:
@@ -86,6 +90,7 @@ while cur<maxEvals:
     print cur,pop[0].fit,ave
     print pop[0].toDict()
     pop[0].report()
+    pop[0].makeProg()
 pop[0].report(True)
 pop[0].makeProg()
 print

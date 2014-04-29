@@ -10,7 +10,7 @@ import numpy
 import metis
 import networkx as nx
 import pygraphviz as pgv
-
+import math
 
 global label
 label =0
@@ -138,6 +138,7 @@ class parseTree:
             for j in xrange(self.settings.gpSettings['maxSize']):
                 add = self.root.evaluate()
                 self.state.addNode(add)
+            #self.fit+=self.assortativityEval()
             self.fit+=self.metisEval()
             data.extend(self.state.calcDegree())
             self.state.reset()
@@ -146,6 +147,24 @@ class parseTree:
         self.fit-=self.size*self.settings.gpSettings['penalty']
         
         return self.fit
+
+    def assortativityEval(self):
+        G = nx.Graph()
+        for node in xrange(len(self.state.nodeList)):
+            G.add_node(node)
+            for edge in self.state.nodeList[node]:
+                G.add_edge(node,edge)
+        if nx.is_biconnected(G):
+          
+            r = nx.degree_assortativity_coefficient(G)
+            if not math.isnan(r):
+                return 5*abs(r)
+        if nx.is_connected(G):
+            r = nx.degree_assortativity_coefficient(G)
+            if not math.isnan(r):
+                return abs(r)
+
+        return -99999999999999999
 
 
     def metisEval(self):
@@ -158,12 +177,11 @@ class parseTree:
         mod = 0
         if nx.is_connected(G):
             mod = 1
-            return float(edgecuts)-G.number_of_edges()
+            return float(edgecuts)-G.number_of_edges()+10*nx.radius(G)
         return -99999999999999999
 
 
     def report(self,plot=False):
-        self.fit = 0
         data = []
         for i in xrange(self.settings.gpSettings['runs']):
             self.state.reset()
@@ -171,14 +189,7 @@ class parseTree:
                 add = self.root.evaluate()
                 self.state.addNode(add)
             data.extend(self.state.calcDegree())
-        self.fit=numpy.std(data) 
         
-        n,bins,patches = pylab.hist(data,1+max(data)-min(data),histtype='stepfilled')
-        pylab.setp(patches,'facecolor','g','alpha',0.75)
-        print n
-        print bins
-        print patches
-        pylab.ylim([0,max(n)])
         G = nx.Graph()
         for node in xrange(len(self.state.nodeList)):
             G.add_node(node)
@@ -189,6 +200,12 @@ class parseTree:
         X.layout(prog='neato',args="-Goverlap=false -Gscale=.01")
         X.draw(self.name+".png") 
         if plot:
+            n,bins,patches = pylab.hist(data,1+max(data)-min(data),histtype='stepfilled')
+            pylab.setp(patches,'facecolor','g','alpha',0.75)
+            print n
+            print bins
+            print patches
+            pylab.ylim([0,max(n)])
             pylab.show()
         return self.fit
 
@@ -197,7 +214,7 @@ class parseTree:
         tab = "    "
         indent = tab*1
 
-        prog = "\n\n"
+        prog = "import funcs\n\n"
         prog+= "def selectNodes(state):\n"+indent
         prog+=self.root.makeProg(1,"")
         prog+="return x\n"+indent
