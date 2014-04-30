@@ -1,7 +1,7 @@
 import termNodes
 
 class state:
-    def __init__(self,settings):
+    def __init__(self,settings=None):
         self.terms = termNodes.nodes
         self.settings = settings
         self.nodeList = []

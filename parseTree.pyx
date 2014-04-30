@@ -12,6 +12,8 @@ import networkx as nx
 import pygraphviz as pgv
 import math
 import subprocess
+import fitnessFunction
+
 global label
 label =0
 
@@ -47,13 +49,11 @@ class parseTree:
         self.name = str(label)
         label+=1
 
-
-        self.fitness = 0.0
+        self.fit = 0.0
         self.settings = settings
 
         self.state = state.state(settings)
 
-        self.fit = 0
 
         self.createRandom()
 
@@ -64,7 +64,7 @@ class parseTree:
         x.name = str(label)
         label+=1
 
-        x.fitness = 0
+        x.fit = 0.0
         x.update()
         return x
 
@@ -132,14 +132,14 @@ class parseTree:
 
     def evaluate(self):
         cdef int i,j
-        self.fit = 0
+        self.fit = 0.0
         data = []
         for i in xrange(self.settings.gpSettings['runs']):
             for j in xrange(self.settings.gpSettings['maxSize']):
                 add = self.root.evaluate()
                 self.state.addNode(add)
             #self.fit+=self.assortativityEval()
-            self.fit+=self.metisEval()
+            self.fit+=fitnessFunction.funcs[self.settings.gpSettings['fitness']](self.state)
             data.extend(self.state.calcDegree())
             self.state.reset()
         
@@ -177,7 +177,7 @@ class parseTree:
         mod = 0
         if nx.is_connected(G):
             mod = 1
-            return float(edgecuts)-G.number_of_edges()+10*nx.radius(G)
+            return -50*float(edgecuts)+G.number_of_edges()#nx.radius(G)
         return -99999999999999999
 
 
@@ -216,7 +216,12 @@ class parseTree:
         tab = "    "
         indent = tab*1
 
-        prog = "import funcs\n\n"
+        prog = "from funcs import *\n\n"
+        prog+="\n\n\n"+str(self.toDict())+"\n\n\n"
+        prog+="fitness = "+str(self.fit)+"\n"
+        prog+="size = "+str(self.size)+"\n\n\n"
+        
+        
         prog+= "def selectNodes(state):\n"+indent
         prog+=self.root.makeProg(1,"")
         prog+="return x\n"+indent

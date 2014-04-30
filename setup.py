@@ -13,5 +13,6 @@ setup(
                    Extension("setNodes",["setNodes.pyx"]),
                    Extension("settings",["settings.pyx"]),
                    Extension("termNodes",["termNodes.pyx"]),
+                   Extension("fitnessFunction",["fitnessFunction.pyx"]),
                    Extension("funcs", ["funcs.pyx"])]
 )

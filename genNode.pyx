@@ -97,7 +97,7 @@ class node(object):
             if p=='weight':
                 continue
             if p=='data':
-                pList+="\'data\':{state.calcDegree()},"
+                pList+="\'data\':state.calcDegree(),"
                 continue
             if self.params[p]['type']=='choice':
                 pList+="\'"+p+"\':{'value':\'"+self.params[p]['value']+"\'},"

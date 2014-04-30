@@ -26,6 +26,23 @@ class kTourn(genNode.node):
     def toDict(self):
         return {"kTourn("+self.params['opt']['value']+" "+self.params['val']['value']+",k="+str(self.params['k']['value'])+",num="+str(self.params['num']['value'])+")":[self.down[0].toDict()]}
 
+
+class relKTourn(genNode.node):
+    def __init__(self,parent,settings):
+        p= copy.deepcopy(settings.nodeSettings['relKTourn'])
+        super(relKTourn,self).__init__(parent,settings,funcs.relKTourn,"relKTourn",1,p)
+
+    def evaluate(self):
+        
+        self.params['data'] = self.state.calcDegree()
+        return super(relKTourn,self).evaluate()
+
+    def toDict(self):
+        return {"relKTourn("+self.params['opt']['value']+" "+self.params['val']['value']+",relK="+str(self.params['relK']['value'])+",relNum="+str(self.params['relNum']['value'])+")":[self.down[0].toDict()]}
+
+
+
+
 class randSubset(genNode.node):
     def __init__(self,parent,settings):
         p= copy.deepcopy(settings.nodeSettings['randSubset'])
@@ -35,13 +52,29 @@ class randSubset(genNode.node):
         return {"randSubset(num="+str(self.params['num']['value'])+")":[self.down[0].toDict()]}
 
 
+class relRandSubset(genNode.node):
+    def __init__(self,parent,settings):
+        p= copy.deepcopy(settings.nodeSettings['relRandSubset'])
+        super(relRandSubset,self).__init__(parent,settings,funcs.relRandSubset,"relRandSubset",1,p)
+
+    def evaluate(self):
+        
+        self.params['data'] = self.state.calcDegree()
+        return super(relRandSubset,self).evaluate()
+    
+    
+    def toDict(self):
+        return {"relRandSubset(relNum="+str(self.params['relNum']['value'])+")":[self.down[0].toDict()]}
+
+
+
+
 class trunc(genNode.node):
     def __init__(self,parent,settings):
         p= copy.deepcopy(settings.nodeSettings['trunc'])
         super(trunc,self).__init__(parent,settings,funcs.trunc,"trunc",1,p)
 
     def evaluate(self):
-        
         self.params['data'] = self.state.calcDegree()
         return super(trunc,self).evaluate()
 
@@ -50,9 +83,20 @@ class trunc(genNode.node):
 
 
 
+class relTrunc(genNode.node):
+    def __init__(self,parent,settings):
+        p= copy.deepcopy(settings.nodeSettings['relTrunc'])
+        super(relTrunc,self).__init__(parent,settings,funcs.relTrunc,"relTrunc",1,p)
+
+    def evaluate(self):
+        self.params['data'] = self.state.calcDegree()
+        return super(relTrunc,self).evaluate()
+
+    def toDict(self):
+        return {"relTrunc("+self.params['opt']['value']+" "+self.params['val']['value']+",relNum="+str(self.params['relNum']['value'])+")":[self.down[0].toDict()]}
 
 
 
-nodes = [pSelect,kTourn,randSubset,trunc]
+nodes = [pSelect,kTourn,randSubset,trunc,relKTourn,relRandSubset,relTrunc]
 
 
