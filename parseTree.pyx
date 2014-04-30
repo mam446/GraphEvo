@@ -11,7 +11,7 @@ import metis
 import networkx as nx
 import pygraphviz as pgv
 import math
-
+import subprocess
 global label
 label =0
 
@@ -197,8 +197,9 @@ class parseTree:
                 G.add_edge(node,edge)
         nx.write_dot(G,self.name+".dot")
         X = pgv.AGraph(self.name+".dot") 
+        X.node_attr.update(color='gray')
         X.layout(prog='neato',args="-Goverlap=false -Gscale=.01")
-        X.draw(self.name+".png") 
+        X.draw(self.name+".svg") 
         if plot:
             n,bins,patches = pylab.hist(data,1+max(data)-min(data),histtype='stepfilled')
             pylab.setp(patches,'facecolor','g','alpha',0.75)
@@ -207,6 +208,7 @@ class parseTree:
             print patches
             pylab.ylim([0,max(n)])
             pylab.show()
+        self.makeGraph()
         return self.fit
 
 
@@ -305,4 +307,37 @@ class parseTree:
         n.randomize()
         
         return x
+
+
+    def makeGraph(self):
+        val = 'x'
+        s = 'strict digraph { \n ordering=out; node[label\"\\N\"];\n '
+        s+=getEdge(self.root,val)
+        s+="\n}"
+        f = open(self.name+'.dot','w')
+        f.write(s)
+        f.close()
+        subprocess.call(['dot','-Tpng',self.name+'.dot','-o',self.name+'.png'])
+
+        return
+
+
+def getEdge(node,val):
+    s = ""
+    if not node.parent:
+        s+= val+"  [color=goldenrod2,\n label = \""+node.toStr()+"\",\n style=filled];"
+
+    for i in xrange(len(node.down)):
+        s+= val+str(i+1)+"   [color=goldenrod2,\n  label =\""+node.down[i].toStr()+"\",\n style=filled];\n"
+        s+="  "+val+" -> "+val+str(i+1)+';\n'
+        s+=getEdge(node.down[i],val+str(i+1))
+    return s
+
+
+
+
+
+
+
+
 

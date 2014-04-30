@@ -34,6 +34,25 @@ class randSubset(genNode.node):
     def toDict(self):
         return {"randSubset(num="+str(self.params['num']['value'])+")":[self.down[0].toDict()]}
 
-nodes = [pSelect,kTourn,randSubset]
+
+class trunc(genNode.node):
+    def __init__(self,parent,settings):
+        p= copy.deepcopy(settings.nodeSettings['trunc'])
+        super(trunc,self).__init__(parent,settings,funcs.trunc,"trunc",1,p)
+
+    def evaluate(self):
+        
+        self.params['data'] = self.state.calcDegree()
+        return super(trunc,self).evaluate()
+
+    def toDict(self):
+        return {"trunc("+self.params['opt']['value']+" "+self.params['val']['value']+",num="+str(self.params['num']['value'])+")":[self.down[0].toDict()]}
+
+
+
+
+
+
+nodes = [pSelect,kTourn,randSubset,trunc]
 
 

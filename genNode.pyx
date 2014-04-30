@@ -57,6 +57,8 @@ class node(object):
     def toStr(self):
         s = self.name+"\\n"
         for p in self.params:
+            if p=='data':
+                continue
             s+=p+": "+str(self.params[p]['value'])+"\\n"
         return s
 

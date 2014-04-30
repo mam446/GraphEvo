@@ -60,7 +60,7 @@ class empty(genNode.node):
 
 
 
-nodes = [allNodes,empty]
+nodes = [allNodes]
 
 
 

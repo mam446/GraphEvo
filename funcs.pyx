@@ -62,3 +62,22 @@ def randSubset(rDown,params={}):
     return set(x)
 
 
+
+
+def trunc(rDown,params={}):
+    cdef int i,n,c
+    data = {}
+    cur = rDown[0]
+    ret = set()
+    if params['val']['value']=='degree':
+        for c in xrange(len(params['data'])):
+            if c in cur:
+                data[c]=params['data'][c]
+    rev = False
+    if params['opt']['value']=='max':
+        rev=True 
+    L = sorted(data.items(),key=lambda e:e[1],reverse=rev)
+    return set(map(lambda e:e[0],L)[:params['num']['value']])
+
+
+
