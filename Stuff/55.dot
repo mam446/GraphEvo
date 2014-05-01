@@ -1,0 +1,66 @@
+strict digraph { 
+ ordering=out; node[label"\N"];
+ x  [color=goldenrod2,
+ label = "kTourn\nopt: min\nk: 1\nnum: 14\nval: degree\n",
+ style=filled];x1   [color=goldenrod2,
+  label ="trunc\nopt: min\nnum: 2\nval: degree\n",
+ style=filled];
+  x -> x1;
+x11   [color=goldenrod2,
+  label ="relKTourn\nrelK: 25\nrelNum: 21\nopt: min\nval: degree\n",
+ style=filled];
+  x1 -> x11;
+x111   [color=goldenrod2,
+  label ="randSubset\nnum: 70\n",
+ style=filled];
+  x11 -> x111;
+x1111   [color=goldenrod2,
+  label ="symDifference\n",
+ style=filled];
+  x111 -> x1111;
+x11111   [color=goldenrod2,
+  label ="kTourn\nopt: min\nk: 41\nnum: 33\nval: degree\n",
+ style=filled];
+  x1111 -> x11111;
+x111111   [color=goldenrod2,
+  label ="allNodes\n",
+ style=filled];
+  x11111 -> x111111;
+x11112   [color=goldenrod2,
+  label ="difference\n",
+ style=filled];
+  x1111 -> x11112;
+x111121   [color=goldenrod2,
+  label ="relKTourn\nrelK: 6\nrelNum: 29\nopt: min\nval: degree\n",
+ style=filled];
+  x11112 -> x111121;
+x1111211   [color=goldenrod2,
+  label ="pSelect\np: 0.304321906638\n",
+ style=filled];
+  x111121 -> x1111211;
+x11112111   [color=goldenrod2,
+  label ="relRandSubset\nrelNum: 74\n",
+ style=filled];
+  x1111211 -> x11112111;
+x111121111   [color=goldenrod2,
+  label ="allNodes\n",
+ style=filled];
+  x11112111 -> x111121111;
+x111122   [color=goldenrod2,
+  label ="kTourn\nopt: min\nk: 25\nnum: 6\nval: degree\n",
+ style=filled];
+  x11112 -> x111122;
+x1111221   [color=goldenrod2,
+  label ="symDifference\n",
+ style=filled];
+  x111122 -> x1111221;
+x11112211   [color=goldenrod2,
+  label ="allNodes\n",
+ style=filled];
+  x1111221 -> x11112211;
+x11112212   [color=goldenrod2,
+  label ="allNodes\n",
+ style=filled];
+  x1111221 -> x11112212;
+
+}

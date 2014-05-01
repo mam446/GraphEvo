@@ -1,0 +1,18 @@
+strict digraph { 
+ ordering=out; node[label"\N"];
+ x  [color=goldenrod2,
+ label = "kTourn\nopt: min\nk: 1\nnum: 14\nval: degree\n",
+ style=filled];x1   [color=goldenrod2,
+  label ="trunc\nopt: min\nnum: 2\nval: degree\n",
+ style=filled];
+  x -> x1;
+x11   [color=goldenrod2,
+  label ="relTrunc\nopt: min\nrelNum: 33\nval: degree\n",
+ style=filled];
+  x1 -> x11;
+x111   [color=goldenrod2,
+  label ="allNodes\n",
+ style=filled];
+  x11 -> x111;
+
+}

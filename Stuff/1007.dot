@@ -1,0 +1,14 @@
+strict digraph { 
+ ordering=out; node[label"\N"];
+ x  [color=goldenrod2,
+ label = "trunc\nopt: max\nnum: 5\nval: degree\n",
+ style=filled];x1   [color=goldenrod2,
+  label ="trunc\nopt: min\nnum: 32\nval: degree\n",
+ style=filled];
+  x -> x1;
+x11   [color=goldenrod2,
+  label ="allNodes\n",
+ style=filled];
+  x1 -> x11;
+
+}

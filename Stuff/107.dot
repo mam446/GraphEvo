@@ -1,0 +1,30 @@
+strict digraph { 
+ ordering=out; node[label"\N"];
+ x  [color=goldenrod2,
+ label = "kTourn\nopt: min\nk: 40\nnum: 40\nval: degree\n",
+ style=filled];x1   [color=goldenrod2,
+  label ="pSelect\np: 0.646334889855\n",
+ style=filled];
+  x -> x1;
+x11   [color=goldenrod2,
+  label ="union\n",
+ style=filled];
+  x1 -> x11;
+x111   [color=goldenrod2,
+  label ="relKTourn\nrelK: 27\nrelNum: 16\nopt: max\nval: degree\n",
+ style=filled];
+  x11 -> x111;
+x1111   [color=goldenrod2,
+  label ="allNodes\n",
+ style=filled];
+  x111 -> x1111;
+x112   [color=goldenrod2,
+  label ="relTrunc\nopt: min\nrelNum: 43\nval: degree\n",
+ style=filled];
+  x11 -> x112;
+x1121   [color=goldenrod2,
+  label ="allNodes\n",
+ style=filled];
+  x112 -> x1121;
+
+}

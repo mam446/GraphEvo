@@ -1,0 +1,86 @@
+strict digraph { 
+ ordering=out; node[label"\N"];
+ x  [color=goldenrod2,
+ label = "union\n",
+ style=filled];x1   [color=goldenrod2,
+  label ="relRandSubset\nrelNum: 47\n",
+ style=filled];
+  x -> x1;
+x11   [color=goldenrod2,
+  label ="trunc\nopt: max\nnum: 33\nval: degree\n",
+ style=filled];
+  x1 -> x11;
+x111   [color=goldenrod2,
+  label ="kTourn\nopt: max\nk: 9\nnum: 36\nval: degree\n",
+ style=filled];
+  x11 -> x111;
+x1111   [color=goldenrod2,
+  label ="relTrunc\nopt: min\nrelNum: 39\nval: degree\n",
+ style=filled];
+  x111 -> x1111;
+x11111   [color=goldenrod2,
+  label ="relTrunc\nopt: min\nrelNum: 40\nval: degree\n",
+ style=filled];
+  x1111 -> x11111;
+x111111   [color=goldenrod2,
+  label ="intersection\n",
+ style=filled];
+  x11111 -> x111111;
+x1111111   [color=goldenrod2,
+  label ="allNodes\n",
+ style=filled];
+  x111111 -> x1111111;
+x1111112   [color=goldenrod2,
+  label ="allNodes\n",
+ style=filled];
+  x111111 -> x1111112;
+x2   [color=goldenrod2,
+  label ="symDifference\n",
+ style=filled];
+  x -> x2;
+x21   [color=goldenrod2,
+  label ="symDifference\n",
+ style=filled];
+  x2 -> x21;
+x211   [color=goldenrod2,
+  label ="union\n",
+ style=filled];
+  x21 -> x211;
+x2111   [color=goldenrod2,
+  label ="intersection\n",
+ style=filled];
+  x211 -> x2111;
+x21111   [color=goldenrod2,
+  label ="allNodes\n",
+ style=filled];
+  x2111 -> x21111;
+x21112   [color=goldenrod2,
+  label ="allNodes\n",
+ style=filled];
+  x2111 -> x21112;
+x2112   [color=goldenrod2,
+  label ="intersection\n",
+ style=filled];
+  x211 -> x2112;
+x21121   [color=goldenrod2,
+  label ="allNodes\n",
+ style=filled];
+  x2112 -> x21121;
+x21122   [color=goldenrod2,
+  label ="allNodes\n",
+ style=filled];
+  x2112 -> x21122;
+x212   [color=goldenrod2,
+  label ="allNodes\n",
+ style=filled];
+  x21 -> x212;
+x22   [color=goldenrod2,
+  label ="relKTourn\nrelK: 28\nrelNum: 5\nopt: max\nval: degree\n",
+ style=filled];
+  x2 -> x22;
+x221   [color=goldenrod2,
+  label ="allNodes\n",
+ style=filled];
+  x22 -> x221;
+
+}
