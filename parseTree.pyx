@@ -319,7 +319,7 @@ class parseTree:
 
     def makeGraph(self):
         val = 'x'
-        s = 'strict digraph { \n ordering=out; node[label\"\\N\"];\n '
+        s = 'strict digraph { \n ordering=out; node[label=\"\\N\"];\n '
         s+=getEdge(self.root,val)
         s+="\n}"
         f = open(self.name+'.dot','w')
