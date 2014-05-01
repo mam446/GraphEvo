@@ -73,6 +73,9 @@ class parseTree:
         self.root.down = [termNodes.allNodes(self.root,self.settings)]
         self.root.params['p']['value'] = .001
         self.update()
+
+
+
     def createRandom(self,start = None):
         size = random.randint(1,self.settings.gpSettings['maxStartNodes'])
         if start ==None:
@@ -310,7 +313,7 @@ class parseTree:
                 n = self.root
                 break
         n.randomize()
-        
+        x.update()        
         return x
 
 
