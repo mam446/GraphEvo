@@ -6,7 +6,7 @@ s = settings.runSettings()
 
 
 x = parseTree.parseTree(s)
-
+x.createER()
 print x.toDict()
 
 

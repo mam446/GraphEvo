@@ -71,7 +71,7 @@ class parseTree:
     def createER(self):
         self.root = selectionNodes.pSelect(None,self.settings)
         self.root.down = [termNodes.allNodes(self.root,self.settings)]
-        self.root.params['p']['value'] = .001
+        self.root.params['p']['value'] = .01
         self.update()
 
 

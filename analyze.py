@@ -65,6 +65,28 @@ trend_edges = map(ave,trend_edges)
 trend_edgecut = map(ave,trend_edgecut)
 trend_connectivity = map(ave,trend_connectivity)
 
+
+ad = open(sys.argv[1][:-4]+"aveDeg.dat",'w')
+ed = open(sys.argv[1][:-4]+"edge.dat",'w')
+ec = open(sys.argv[1][:-4]+"edgecut.dat",'w')
+con = open(sys.argv[1][:-4]+"connect.dat",'w')
+
+for i in xrange(size):
+    ad.write(str(i)+","+str(trend_aveDegree[i])+"\n")
+    ed.write(str(i)+","+str(trend_edges[i])+"\n")
+    ec.write(str(i)+","+str(trend_edgecut[i])+"\n")
+    con.write(str(i)+","+str(trend_connectivity[i])+"\n")
+
+ad.close()
+ed.close()
+ec.close()
+con.close()
+
+
+
+
+
+
 print
 print "Nodes: ",size
 print "Fitness: ",fitness
@@ -101,6 +123,7 @@ n,bins,patches = plt.hist(degreeData,1+max(degreeData)-min(degreeData),histtype=
 plt.setp(patches,'facecolor','g','alpha',0.75)
 plt.ylim([0,max(n)])
 ax5.set_title('Degree Distribution')
+plt.savefig(sys.argv[1][:-4]+"analysis.png")
 plt.show()
 
 

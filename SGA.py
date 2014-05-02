@@ -77,7 +77,9 @@ while cur<maxEvals:
     pop.extend(childs)
     x = []
     for i in xrange(mu):
-        x.append(ktourn(pop,sk))
+        y = ktourn(pop,sk)
+        pop.remove(y)
+        x.append(y)
     pop = x
     pop.sort(reverse=True)
     cur+=children

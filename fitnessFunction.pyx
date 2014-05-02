@@ -15,7 +15,7 @@ def maxMetisEval(state,partitions=2):
     mod = 0
     if nx.is_connected(G):
         mod = 1
-        return 50*float(edgecuts)-G.number_of_edges()#nx.radius(G)
+        return float(edgecuts)-2*G.number_of_edges()#nx.radius(G)
     return -99999999999999999
 
 
