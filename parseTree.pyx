@@ -184,7 +184,7 @@ class parseTree:
         return -99999999999999999
 
 
-    def report(self,plot=False):
+    def report(self,plot=False, outdir=''):
         data = []
         for i in xrange(self.settings.gpSettings['runs']):
             self.state.reset()
@@ -198,11 +198,11 @@ class parseTree:
             G.add_node(node)
             for edge in self.state.nodeList[node]:
                 G.add_edge(node,edge)
-        nx.write_dot(G,self.name+".dot")
-        X = pgv.AGraph(self.name+".dot") 
+        nx.write_dot(G,outdir+self.name+".dot")
+        X = pgv.AGraph(outdir+self.name+".dot")
         X.node_attr.update(color='gray')
         X.layout(prog='neato',args="-Goverlap=false -Gscale=.01")
-        X.draw(self.name+".svg") 
+        X.draw(outdir+self.name+".svg")
         if plot:
             n,bins,patches = pylab.hist(data,1+max(data)-min(data),histtype='stepfilled')
             pylab.setp(patches,'facecolor','g','alpha',0.75)
@@ -211,11 +211,11 @@ class parseTree:
             print patches
             pylab.ylim([0,max(n)])
             pylab.show()
-        self.makeGraph()
+        self.makeGraph(outdir=outdir)
         return self.fit
 
 
-    def makeProg(self):
+    def makeProg(self, outdir=''):
         tab = "    "
         indent = tab*1
 
@@ -228,7 +228,7 @@ class parseTree:
         prog+= "def selectNodes(state):\n"+indent
         prog+=self.root.makeProg(1,"")
         prog+="return x\n"+indent
-        f = open(self.name+"-prog.py",'w+')
+        f = open(outdir+self.name+"-prog.py",'w+')
         f.write(prog)
         f.close()
 
@@ -331,15 +331,15 @@ class parseTree:
         return x
 
 
-    def makeGraph(self):
+    def makeGraph(self, outdir=''):
         val = 'x'
         s = 'strict digraph { \n ordering=out; node[label=\"\\N\"];\n '
         s+=getEdge(self.root,val)
         s+="\n}"
-        f = open(self.name+'.dot','w')
+        f = open(outdir+self.name+'.dot','w')
         f.write(s)
         f.close()
-        subprocess.call(['dot','-Tpng',self.name+'.dot','-o',self.name+'.png'])
+        subprocess.call(['dot','-Tpng',outdir+self.name+'.dot','-o',outdir+self.name+'.png'])
 
         return
 

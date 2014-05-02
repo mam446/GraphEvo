@@ -5,6 +5,14 @@ import random
 import settings
 import parseTree
 import copy
+import argparse
+import os
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-s', '--settings', default='', metavar='settingsFile.pyx', help='specifies the settings file')
+parser.add_argument('-o', '--outdir', default='', metavar='path/to/output', help='directory in which to place output files')
+
+args = parser.parse_args()
 
 def ktourn(pop,k):
 
@@ -18,10 +26,16 @@ def ktourn(pop,k):
 
 
 s = None
-if len(sys.argv)>1:
-    s = settings.runSettings(sys.argv[1])
+if args.settings != '':
+    s = settings.runSettings(args.settings)
 else:
     s = settings.runSettings()
+outdir = args.outdir
+if outdir != '':
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+    if not outdir.endswith('/'):
+        outdir += '/'
 s.seed =time.time()
 random.seed(s.seed)
 mu = 100 
@@ -43,7 +57,7 @@ maxEvals = 5000
 cur = mu
 children = 50
 sk = 5
-pop[0].report()
+pop[0].report(outdir=outdir)
 while cur<maxEvals:
     
     c = 0
@@ -93,10 +107,10 @@ while cur<maxEvals:
 
     print cur,pop[0].fit,ave
     print pop[0].toDict()
-    pop[0].report()
-    pop[0].makeProg()
-pop[0].report(True)
-pop[0].makeProg()
+    pop[0].report(outdir=outdir)
+    pop[0].makeProg(outdir=outdir)
+pop[0].report(True, outdir=outdir)
+pop[0].makeProg(outdir=outdir)
 print
 print
 print "Best"
