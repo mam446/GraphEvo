@@ -25,7 +25,7 @@ class runSettings:
         self.gpSettings['runs'] = 20 
         self.gpSettings['penalty'] = 1
         self.gpSettings['maxSize'] = 300
-        self.gpSettings['fitness'] = 'maxMetis'
+        self.gpSettings['fitness'] = 'minMetis'
         #variation node
         self.nodeSettings['scalarMult'] = {'scalar':{'value':0.0,'range':(-50.0,50.0),'type':'float'}}
         self.nodeSettings['randSubset'] = {'num':{'value':0,'range':(1,100),'type':'int'}}
