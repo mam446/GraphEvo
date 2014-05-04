@@ -1,5 +1,10 @@
 \documentclass{article}
 
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+
 \usepackage{graphicx}
 
 \begin{document}
@@ -66,24 +71,112 @@ The goal of this research is to develop a general purpose genetic algorithm whic
 
 \begin{figure}
 \begin{centering}
-  \includegraphics[scale=0.6]{RandomGraphExample}
+  \includegraphics[scale=0.4]{RandomGraphExample2.png}
   \caption{Example Random Graph Generating Parse Tree}
   \label{fig:example}
 \end{centering}
 \end{figure}
 
 
-This paper discusses a method using GP to evolve an algorithm that generates a random graph of with a specified nature.  The method proposed uses Koza style GP to evolve a post-ordered parse tree structure that will represent the algorithm. Most random-graph generating algorithms repeat a node adding phase $n$ times to create a random graph of size $n$. Our algorithm takes advantage of this repetitive nature of random-graph algorithms in such a way that it only evolves the method for adding a node and its connections. In this phase, the parse tree decides which nodes will be adjacent to the new node.
+This paper discusses a method using GP to evolve an algorithm that generates a random graph 
+of with a specified nature.  The method proposed uses Koza style GP to evolve a post-ordered 
+parse tree structure that will represent the algorithm. Most random-graph generating algorithms 
+repeat a node adding phase $n$ times to create a random graph of size $n$. Our algorithm takes 
+advantage of this repetitive nature of random-graph algorithms in such a way that it only 
+evolves the method for adding a vertex and its connections. In this phase, the parse tree decides 
+which vertices will be adjacent to the new vertex.
 
-There are two proposed methods that this decision process can be done. One method is for each new node, the algorithm would iterate over every existing node and the parse tree would determine if a connection would be made between that node and the new node. The second method would be for the parse tree to be evaluated one time and determine the set of nodes to which the new node will be connected.  It was determined that the second method would be the preferred option, as it would be easier to construct some of the pre-existing random graph algorithms such as the Erd\H{o}s-R\'{e}nyi model.
 
-The parse tree will be constructed from a set of operations that will be used as the non-terminal nodes and sets of nodes which will be used as the terminal nodes.  Each of the operations will take in one or more sets of nodes and return a single set of nodes. The set of nodes returned by the root node will be the set of nodes that the newly created node will connect to. The terminal nodes will be sets of node such as a random subset of the current node set, the entire node set or the empty set. An example parse tree can be seen in Figure \ref{fig:example}.
+\subsection{Parse-Tree}
+There are two proposed methods that this decision process can be done. One method is for each new vertex, 
+the algorithm would iterate over every existing vertex and the parse tree would determine if a 
+connection would be made between that vertex and the new vertex. The second method would be for the parse 
+tree to be evaluated one time and determine the set of vertices to which the new node will be connected.  
+It was determined that the second method would be the preferred option, as it would be easier to 
+construct some of the pre-existing random graph algorithms such as the Erd\H{o}s-R\'{e}nyi model.
 
-The main nodes that will be used as the non-terminal nodes will be selection nodes. These nodes will take a set of nodes and select a subset of those nodes to return to its parent node. One example is the selection criterion that is used in the Erd\H{o}s-R\'{e}nyi model. Every node has a $p$ percent chance of getting selected.  Other selection operations such as k-tournament, proportional selection and others can also be used if there is some measure of the nodes that they can be selected on. This could be the degree of the node or some other property that can be attributed to that node.  Other nodes that will be included are set operation nodes such as union, intersection, and disjoint.  By including selection operations that are taken from current random graph models we are guaranteed to be able to represent those models in the parse tree structure.
+\subsection{Nodes}
+The parse tree will be constructed from a set of operations that will be used as the non-terminal 
+nodes. Sets of vertices which will be used as the terminal nodes in the parse tree.  Each of the operations will take 
+in one or more sets of vertices and return a single set of vertices. The set of vertices returned by the 
+root node will be the set of vertices that the newly created vertex will connect to. 
+An example parse tree can be seen in Figure \ref{fig:example}.
 
-To evaluate these parse trees random graphs will be generated using the method described in the parse tree. The parse trees will be given a fitness value based on how closely the graphs they generate comply with a user defined model. For the experiments that will be constructed, the models will be fairly rudimentary to show a proof of concept. An example of this could be all nodes have an equal or near equal degree and the degree is roughly $\frac{n}{3}$, $n$ being the number of nodes in the graph.  The user can specify the model and the standard deviation away from the model that the random graphs may have. For the fitness function, $k$ graphs at evenly spaced intervals between the min and max graph size of interest will be sampled. The difference at each point will be averaged along with the standard deviation used in a weighted sum to give each parse tree a fitness value.
+There are two primary types of non-terminal operations that are used as nodes in the construction of the parse-tree. The
+first of which are selection operations. These operations take a set of vertices and by some method selects vertices from
+that set and returns them to its parent node. The second type of non-terminal operations are set operations. These nodes 
+typically take two sets of vertices and perform some kind of set operation on the two sets and return the product to its
+parent node. The exact specifications of the operations that were used as nodes can be found below.
 
-The GP will be using standard GP operators along with other operators to help with a local search of the parse trees. The standard GP operators include subtree crossover and subtree mutation. The new operator is an alternate mutation operator which randomly selects a node of the parse tree and randomly changes the parameters of the operation contained in that node.
+\subsubsection{Selection Nodes}
+There are two types of selection nodes that were used to evolve the Random Graph Algorithms. The first of which are standard
+selection operations that have constant values for their parameters. The second are relative selection operations. For this 
+second type of selection operations, the parameter values used are relative to the size of the graph. This addition was made
+so that the Random Grpah Algorithms would create graphs with the same properties as the size of the graph increased substantially. 
+
+In a majority of the selection operations, the vertices are compared to one another to determine selection. When this is the case, 
+they are compared based upon some measure of the node. In the experiments reported in this paper, the only measure that was available
+was the degree of the vertex. This however could be any measure of a node such as its eccentricity or other measures. For these
+selection operations that are based on vertex measures, the selection can be done as a minimization or maximization of that measure. For
+example, the operation could try to select vertices with a high degree or select vertices with a low degree.
+
+For the first type of selection operation, there were four selection operations that were used. The first of which is call `p-Select'.
+This selection operation iterates over the set of vertices that were passed in and has a $p$ probability of selecting each vertex. The
+second selection operation is the standard k-Tournament selection with replacement. This operation has two parameters; one of which is $k$ which
+is the number of vertices to compare each iteration, and $num$ which is the number of vertices selected and passed to its parent node. Note that 
+vertices can be reselected during the selection process, they will not appear multiple times in the sets that are passed to its parent. This 
+is done to insure that the resulting random graphs are simple. The third selection operation is a random sub-set operation. This operation takes 
+a random sub-set of size $n$ from the set passed and returns that set to its parent node. This selection is done without replacement. The fourth 
+selection operation is truncation selection. This operation selects the highest or lowest $n$ vertices based on the measure specified, and passes
+them to its parent node.
+
+The second type of selelction operation is relative selections. There are three selection operations of this type used in the experiments presented
+in this paper. They are the k-Tournament selection, random sub-set selection and truncation selection that were presented earlier. The difference
+in this version of the selection is that each of the parameters of the selection are relative to the size of the graph. An example of the
+relation for k-Tournament's $k$ can be seen in Equation~\ref{eq:example}.
+
+\begin{equation}
+\label{eq:example}
+k_{val} = \floor*{\frac{n}{k_{rel}}}
+\end{equation}
+
+In the above equation, $k_{val}$ is the $k$ value that is used for that run of the k-Tournament function, $n$ is the number of vertices in the graph, and $k_{rel}$
+is a constant parameter value that is associated with that k-Tournament node.
+
+
+\subsubsection{Set Nodes}
+
+The second type of operation that is used in the presented experiments are set operations. All of these operations take two sets of vertices and return
+a single set of vertices to its parent node. There are four set operations that are used in the experiments. The first is the union operation which returns
+the vertices which are in both sets passed in. The second is the intersection which returns the vertices which are in common between the two sets passed in. 
+The third is the difference operation which returns the vertices that are in the left child's set but not in the right child's. The fourth is the symmetric
+difference operation which returns the vertices that are in either the left child's set or the right child's set but not in both. 
+
+
+\subsection{Meta-Algorithm}
+GP is employed to meta-evolve the Random Graph Algorithms. The two primary variation operators employed are the standard sub-tree crossover and the sub-tree
+mutation operator altered to make the maximum number of nodes being added a user defined value. Another mutation operation was added to this algorithm that 
+selects a node at random from the parse tree and randomizes the parameters if it has any; if the node does not have any parameters the mutation is executed again. 
+The parameters are set to a random valued within a specified user range for each nodes parameters. This can also alter the type of measure used in the selection
+operations and if the selections attempt to minimize or maximize the measure. 
+
+\subsubsection{Random Graph Algorithm}
+
+
+\subsubsection{Fitness Calculation}
+
+\subsubsection{External Verification}
+To assure that the performance of the evolved Random Graph Algorithms areconsistent with their performance reported during evolution,
+executable code is generated to represent the parse tree. This is done to externally verify that the performance that the GP shows for a
+given Random Graph Algorithm is accurate when actually implemented. The generated code is used in all of the experiments to ensure unbiased execution 
+of the Random Graph Algorithms.
+
+
+%The main nodes that will be used as the non-terminal nodes will be selection nodes. These nodes will take a set of nodes and select a subset of those nodes to return to its parent node. One example is the selection criterion that is used in the Erd\H{o}s-R\'{e}nyi model. Every node has a $p$ percent chance of getting selected.  Other selection operations such as k-tournament, proportional selection and others can also be used if there is some measure of the nodes that they can be selected on. This could be the degree of the node or some other property that can be attributed to that node.  Other nodes that will be included are set operation nodes such as union, intersection, and disjoint.  By including selection operations that are taken from current random graph models we are guaranteed to be able to represent those models in the parse tree structure.
+
+%To evaluate these parse trees random graphs will be generated using the method described in the parse tree. The parse trees will be given a fitness value based on how closely the graphs they generate comply with a user defined model. For the experiments that will be constructed, the models will be fairly rudimentary to show a proof of concept. An example of this could be all nodes have an equal or near equal degree and the degree is roughly $\frac{n}{3}$, $n$ being the number of nodes in the graph.  The user can specify the model and the standard deviation away from the model that the random graphs may have. For the fitness function, $k$ graphs at evenly spaced intervals between the min and max graph size of interest will be sampled. The difference at each point will be averaged along with the standard deviation used in a weighted sum to give each parse tree a fitness value.
+
+%The GP will be using standard GP operators along with other operators to help with a local search of the parse trees. The standard GP operators include subtree crossover and subtree mutation. The new operator is an alternate mutation operator which randomly selects a node of the parse tree and randomly changes the parameters of the operation contained in that node.
 
 
 
