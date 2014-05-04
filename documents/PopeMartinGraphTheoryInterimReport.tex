@@ -177,34 +177,55 @@ be connected. If the graph was not connected the fitness value was set to an arb
 
 The first fitness function was designed to maximize 
 the edgecut needed to partition the graph into two pieces while minimizing the number of edges in the graph. To approximate the edgecut of the partition,
-the Metis algorithm was used. The edges are minimized to prevent a complete graph from being evolved. This fitness function can be seen in Equation~\ref{eq:maxMetis}.
+the Metis algorithm was used. The edges are minimized to prevent a complete graph from being always evolved. This fitness function can be seen in Equation~\ref{eq:maxMetis}.
 
 \begin{equation}
 \label{eq:maxMetis}
 fitness = c_1E_c - c_2E
 \end{equation}
 
-In the above equation, $c_1$ and $c_2$ are weighting constants, $E_c$ is the edge cut of the graph, and $E$ is the number of edges in the graph.
+In the above equation, $c_1$ and $c_2$ are positive weighting constants, $E_c$ is the edge cut of the graph, and $E$ is the number of edges in the graph.
 
 
 The second fitness function was designed to minimize 
 the edgecut needed to partition the graph into two pieces while maximizing the number of edges in the graph. To approximate the edgecut of the partition,
-the Metis algorithm was used. The edges are maximized to prevent an empty graph from being evolved. This fitness function can be seen in Equation~\ref{eq:maxMetis}.
+the Metis algorithm was used. The edges are maximized to prevent an empty graph from always being evolved. This fitness function can be seen in Equation~\ref{eq:minMetis}.
 
 \begin{equation}
-\label{eq:maxMetis}
+\label{eq:minMetis}
 fitness = -c_1E_c + c_2E
 \end{equation}
 
-In the above equation, $c_1$ and $c_2$ are weighting constants, $E_c$ is the edge cut of the graph, and $E$ is the number of edges in the graph.
+In the above equation, $c_1$ and $c_2$ are positive weighting constants, $E_c$ is the edge cut of the graph, and $E$ is the number of edges in the graph.
 
 
 
+The third fitness function was designed to maximize the average eccentricity of a graph while trying to maximize the number of edges. This fitness function
+can be seen in in Equation~\ref{eq:maxEccen}.
 
 
+\begin{equation}
+\label{eq:maxEccen}
+fitness = c_1\frac{\sum\limits_{e \in G}\epsilon_{G}(e)}{n} + c_2E
+\end{equation}
+
+In the above equation, $c_1$ and $c_2$ are positive weighting constants, $\epsilon_{G}(e)$ is the eccentricity of edge $e$, and $E$ is the number of edges in the graph.
 
 
+The fourth fitness function was designed to minimize the average eccentricity of a graph while trying to minimize the number of edges. The edges are minimized to 
+prevent a complete graph from always being evolved. This fitness function
+can be seen in in Equation~\ref{eq:minEccen}.
 
+
+\begin{equation}
+\label{eq:minEccen}
+fitness = -c_1\frac{\sum\limits_{e \in G}\epsilon_{G}(e)}{n} - c_2E
+\end{equation}
+
+In the above equation, $c_1$ and $c_2$ are positive weighting constants, $\epsilon_{G}(e)$ is the eccentricity of edge $e$, and $E$ is the number of edges in the graph.
+
+For each of the fitness function parsimony pressure is added to temper the growth of the parse trees. The parsimony pressure is calculated by multiplying the number
+of nodes in a tree by a user defind value. The parsimony pressure is subtracted from fitness calculated by the fitness functions defined.
 
 \subsubsection{External Verification}
 To assure that the performance of the evolved Random Graph Algorithms areconsistent with their performance reported during evolution,
