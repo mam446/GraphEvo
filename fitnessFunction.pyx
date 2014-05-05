@@ -1,5 +1,6 @@
 import networkx as nx
 import metis
+from random import choice
 
 
 
@@ -69,6 +70,32 @@ def maxEccenEval(state):
         return 50 * avgEccen + G.number_of_edges()
     return -99999999999999999
 
+def maxClustEval(state):
+    G = state
+    if type(G) is not nx.classes.graph.Graph:
+        G = nx.Graph()
+        for node in xrange(len(state.nodeList)):
+            G.add_node(node)
+            for edge in state.nodeList[node]:
+                G.add_edge(node,edge)
+    if nx.is_connected(G):
+        return 100000 * nx.average_clustering(G) - G.number_of_edges()
+    return -99999999999999999
+
+def resilientEval(state, failureRatio=0.1):
+    G = state
+    if type(G) is not nx.classes.graph.Graph:
+        G = nx.Graph()
+        for node in xrange(len(state.nodeList)):
+            G.add_node(node)
+            for edge in state.nodeList[node]:
+                G.add_edge(node,edge)
+    numEdges = G.size()
+    numFails = int(G.order() * failureRatio)
+    for _ in xrange(numFails):
+        G.remove_node(choice(G.nodes()))
+    possibleEdges = G.order() * (G.order() + 1) / 2
+    return 1000 * float(len(nx.connected_components(G)[0]))/(G.order()) - (2000 * G.size() / possibleEdges)
 
 
 funcs = {}
@@ -76,5 +103,7 @@ funcs['minMetis'] = minMetisEval
 funcs['maxMetis'] = maxMetisEval
 funcs['minEccen'] = minEccenEval
 funcs['maxEccen'] = maxEccenEval
+funcs['maxClust'] = maxClustEval
+funcs['resilient'] = resilientEval
 
 
