@@ -153,7 +153,7 @@ The third is the difference operation which returns the vertices that are in the
 difference operation which returns the vertices that are in either the left child's set or the right child's set but not in both. 
 
 
-\subsection{Meta-Algorithm}
+\subsection{Genetic Program}
 GP is employed to meta-evolve the Random Graph Algorithms. The two primary variation operators employed are the standard sub-tree crossover and the sub-tree
 mutation operator altered to make the maximum number of nodes being added a user defined value. Another mutation operation was added to this algorithm that 
 selects a node at random from the parse tree and randomizes the parameters if it has any; if the node does not have any parameters the mutation is executed again. 
@@ -200,13 +200,13 @@ In the above equation, $c_1$ and $c_2$ are positive weighting constants, $E_c$ i
 
 
 
-The third fitness function was designed to maximize the average eccentricity of a graph while trying to maximize the number of edges. This fitness function
-can be seen in in Equation~\ref{eq:maxEccen}.
+The third fitness function was designed to maximize the average eccentricity of a graph while trying to minimize the number of edges. The edges are minimized
+to prevent a complete graph from always being evolved. This fitness function can be seen in in Equation~\ref{eq:maxEccen}.
 
 
 \begin{equation}
 \label{eq:maxEccen}
-fitness = c_1\frac{\sum\limits_{e \in G}\epsilon_{G}(e)}{n} + c_2E
+fitness = c_1\frac{\sum\limits_{e \in G}\epsilon_{G}(e)}{n} - c_2E
 \end{equation}
 
 In the above equation, $c_1$ and $c_2$ are positive weighting constants, $\epsilon_{G}(e)$ is the eccentricity of edge $e$, and $E$ is the number of edges in the graph.
@@ -235,6 +235,97 @@ of the Random Graph Algorithms.
 
 
 \section{Experimental Setup}
+The goal of this paper was to demonstrate that custom Random Graph Algorithms can be generated using GP. To demonstrate this, Random Graph Algorithms were evolved
+using the four fitness functions described earlier. We then compare the evolved Random Graph Algorithms to pre-existing algorithms to demonstrate the need for new
+Random Graph Algorithms for a user-defined application. Four experiments were conducted to demonstrate that a custom Random Graph Algorithm can be generated to 
+create random graphs that have qualities defined by the fitness function used. Each of the experiments are cunducted five times to demonstrate the ability to 
+consitently evolve high-quality Random Graph Algorithms.
+
+\begin{table}
+    \begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Parameter} &\textbf{Value}\\ \hline
+        Evaluations&5000\\ \hline
+        Initial Population&100\\ \hline
+        Children per Generation&50\\ \hline
+        k-Tournament for Parent Selection&8\\ \hline
+        k-Tournament for Survival Selection&5\\ \hline
+	    Sub-Tree Crossover Probability& 35\% \\ \hline
+	    Sub-Tree Mutation Probability& 35\% \\ \hline
+	    Alternate Mutation Probability& 30\% \\ \hline
+	    Alternate Mutation Depth& 5\\ \hline
+	    Parsimony Pressure & 1\\ \hline
+        Random Graph Algorithm Runs&20\\ \hline
+        Graph Size&300\\ \hline
+    \end{tabular}
+    \end{center}
+\caption{GP Configurations}
+  \label{tab:GP}
+\end{table}
+
+Each of the four experiments will be run using the same parameter settings for the GP algorithm.  
+The GP was run for 5000 evaluations. The initial population
+was 100 individuals and each generation 50 new individuals were created. $k$-tournament selection with replacement 
+and $k=8$ was employed for parent selection. $k$-tournament selection without replacement and $k=5$ was employed for survival selection.
+The sub-tree crossover and mutation operations had 35\% chance of being used
+while the alternate mutation had a probability of 30\%. The parsimony pressure for the tree size was 1.
+Each Random Graph Algorithm was run 20 times during the evolution and generated graphs of size 300. 
+Due to the high computational cost of running the GP, only minimal tuning was feasible. A summary
+of the parameter settings for the GP can be seen in Table~\ref{tab:GP}. A summary of the constant weights used
+in the fitness functions for the experiments can be seen in Table~\ref{tab:fitness}.
+
+
+\begin{table}
+    \begin{center}
+    \begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{Fitness Function} & \textbf{$c_1$} & \textbf{$c_2$} \\ \hline
+    Maximize Edgecut&1 & 2\\ \hline
+    Minimize Edgecut&50& 1 \\ \hline
+    Maximize Average Eccentricity& 50 &1\\ \hline
+    Minimize Average Eccentricity& 50 &1\\ \hline
+    \end{tabular}
+    \end{center}
+    \caption{Constant weight settings for fitness functions}
+    \label{tab:fitness}
+\end{table}
+
+\begin{table}
+    \begin{center}
+    
+
+    \begin{tabular}{|c|c|c|}
+        \hline
+        \textbf{Operation} &\textbf{Parameter}&\textbf{Range/Options}\\ \hline
+        p-Select & $p$ & (0,1.0)\\ \hline \hline
+        k-Tournament Selection & $k$ & (1,50) \\ \hline
+        * & $num$ & (1,50)\\ \hline
+        * & Measure & degree \\ \hline
+        * & Optimization & minimize, maximize \\ \hline \hline
+        Random Subset Selection & $num$ & (1,50) \\ \hline \hline
+        Truncation Selection & $num$ & (1,50) \\ \hline
+        * & Measure & degree \\ \hline
+        * & Optimization & minimize, maximize \\ \hline \hline
+
+        Relative k-Tournament Selection & $k_{rel}$ & (1,50) \\ \hline
+        * & $num_{rel}$ & (1,50)\\ \hline
+        * & Measure & degree \\ \hline
+        * & Optimization & minimize, maximize \\ \hline \hline
+        Relative Random Subset Selection & $num_{rel}$ & (1,50) \\ \hline \hline
+        Relative Truncation Selection & $num_{rel}$ & (1,50) \\ \hline
+        * & Measure & degree \\ \hline
+        * & Optimization & minimize, maximize \\ \hline
+
+    \end{tabular}
+    \end{center}
+\caption{Operation Parameter Ranges}
+    \label{tab:op}
+\end{table}
+
+Each operation that can be used during the evolution of the Random Graph Algorithms has parameters with user-defind ranges. For the `p-select' operation
+the range that its parameter can take is from 0.0 to 1.0. For all other parameters that the other operations use, the range is from 1 to 50 inclusively.
+A summary of the parameter ranges can be seen in Table~\ref{tab:op}.
 
 \section{Results}
 
@@ -243,12 +334,6 @@ of the Random Graph Algorithms.
 \section{Conclusion}
 
 \section{Future Work}
-
-%The main nodes that will be used as the non-terminal nodes will be selection nodes. These nodes will take a set of nodes and select a subset of those nodes to return to its parent node. One example is the selection criterion that is used in the Erd\H{o}s-R\'{e}nyi model. Every node has a $p$ percent chance of getting selected.  Other selection operations such as k-tournament, proportional selection and others can also be used if there is some measure of the nodes that they can be selected on. This could be the degree of the node or some other property that can be attributed to that node.  Other nodes that will be included are set operation nodes such as union, intersection, and disjoint.  By including selection operations that are taken from current random graph models we are guaranteed to be able to represent those models in the parse tree structure.
-
-%To evaluate these parse trees random graphs will be generated using the method described in the parse tree. The parse trees will be given a fitness value based on how closely the graphs they generate comply with a user defined model. For the experiments that will be constructed, the models will be fairly rudimentary to show a proof of concept. An example of this could be all nodes have an equal or near equal degree and the degree is roughly $\frac{n}{3}$, $n$ being the number of nodes in the graph.  The user can specify the model and the standard deviation away from the model that the random graphs may have. For the fitness function, $k$ graphs at evenly spaced intervals between the min and max graph size of interest will be sampled. The difference at each point will be averaged along with the standard deviation used in a weighted sum to give each parse tree a fitness value.
-
-%The GP will be using standard GP operators along with other operators to help with a local search of the parse trees. The standard GP operators include subtree crossover and subtree mutation. The new operator is an alternate mutation operator which randomly selects a node of the parse tree and randomly changes the parameters of the operation contained in that node.
 
 
 

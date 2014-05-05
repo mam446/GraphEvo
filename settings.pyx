@@ -25,17 +25,16 @@ class runSettings:
         self.gpSettings['runs'] = 20 
         self.gpSettings['penalty'] = 1
         self.gpSettings['maxSize'] = 300
-        self.gpSettings['fitness'] = 'maxMetis'
+        self.gpSettings['fitness'] = 'maxEccen'
         #variation node
-        self.nodeSettings['scalarMult'] = {'scalar':{'value':0.0,'range':(-50.0,50.0),'type':'float'}}
-        self.nodeSettings['randSubset'] = {'num':{'value':0,'range':(1,100),'type':'int'}}
+        self.nodeSettings['randSubset'] = {'num':{'value':0,'range':(1,50),'type':'int'}}
 
         self.nodeSettings['pSelect'] = {'p':{'value':0.0,'range':(0,1),'type':'float'}}
         self.nodeSettings['kTourn'] = {'k':{'value':0,'range':(1,50),'type':'int'},'num':{'value':0,'range':(1,50),'type':'int'},'opt':{'value':"",'range':['max','min'],'type':'choice'},'val':{'value':"",'range':['degree'],'type':'choice'}}
 
         self.nodeSettings['trunc'] = {'num':{'value':0,'range':(1,50),'type':'int'},'opt':{'value':"",'range':['max','min'],'type':'choice'},'val':{'value':"",'range':['degree'],'type':'choice'}}
        
-        self.nodeSettings['relRandSubset'] = {'relNum':{'value':0,'range':(1,100),'type':'int'}}
+        self.nodeSettings['relRandSubset'] = {'relNum':{'value':0,'range':(1,50),'type':'int'}}
 
         self.nodeSettings['relKTourn'] = {'relK':{'value':0,'range':(1,50),'type':'int'},'relNum':{'value':0,'range':(1,50),'type':'int'},'opt':{'value':"",'range':['max','min'],'type':'choice'},'val':{'value':"",'range':['degree'],'type':'choice'}}
         
