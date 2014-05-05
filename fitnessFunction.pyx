@@ -67,7 +67,7 @@ def maxEccenEval(state):
         for node in nodeEccentricities:
             avgEccen += nodeEccentricities[node]
         avgEccen /= len(state.nodeList)
-        return 50 * avgEccen + G.number_of_edges()
+        return 50 * avgEccen - G.number_of_edges()
     return -99999999999999999
 
 def maxClustEval(state):

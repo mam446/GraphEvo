@@ -1,5 +1,10 @@
 \documentclass{article}
 
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+
 \usepackage{graphicx}
 
 \begin{document}
@@ -66,24 +71,269 @@ The goal of this research is to develop a general purpose genetic algorithm whic
 
 \begin{figure}
 \begin{centering}
-  \includegraphics[scale=0.6]{RandomGraphExample}
+  \includegraphics[scale=0.4]{RandomGraphExample2.png}
   \caption{Example Random Graph Generating Parse Tree}
   \label{fig:example}
 \end{centering}
 \end{figure}
 
 
-This paper discusses a method using GP to evolve an algorithm that generates a random graph of with a specified nature.  The method proposed uses Koza style GP to evolve a post-ordered parse tree structure that will represent the algorithm. Most random-graph generating algorithms repeat a node adding phase $n$ times to create a random graph of size $n$. Our algorithm takes advantage of this repetitive nature of random-graph algorithms in such a way that it only evolves the method for adding a node and its connections. In this phase, the parse tree decides which nodes will be adjacent to the new node.
+This paper discusses a method using GP to evolve an algorithm that generates a random graph 
+of with a specified nature.  The method proposed uses Koza style GP to evolve a post-ordered 
+parse tree structure that will represent the algorithm. Most random-graph generating algorithms 
+repeat a node adding phase $n$ times to create a random graph of size $n$. Our algorithm takes 
+advantage of this repetitive nature of random-graph algorithms in such a way that it only 
+evolves the method for adding a vertex and its connections. In this phase, the parse tree decides 
+which vertices will be adjacent to the new vertex.
 
-There are two proposed methods that this decision process can be done. One method is for each new node, the algorithm would iterate over every existing node and the parse tree would determine if a connection would be made between that node and the new node. The second method would be for the parse tree to be evaluated one time and determine the set of nodes to which the new node will be connected.  It was determined that the second method would be the preferred option, as it would be easier to construct some of the pre-existing random graph algorithms such as the Erd\H{o}s-R\'{e}nyi model.
 
-The parse tree will be constructed from a set of operations that will be used as the non-terminal nodes and sets of nodes which will be used as the terminal nodes.  Each of the operations will take in one or more sets of nodes and return a single set of nodes. The set of nodes returned by the root node will be the set of nodes that the newly created node will connect to. The terminal nodes will be sets of node such as a random subset of the current node set, the entire node set or the empty set. An example parse tree can be seen in Figure \ref{fig:example}.
+\subsection{Parse-Tree}
+There are two proposed methods that this decision process can be done. One method is for each new vertex, 
+the algorithm would iterate over every existing vertex and the parse tree would determine if a 
+connection would be made between that vertex and the new vertex. The second method would be for the parse 
+tree to be evaluated one time and determine the set of vertices to which the new node will be connected.  
+It was determined that the second method would be the preferred option, as it would be easier to 
+construct some of the pre-existing random graph algorithms such as the Erd\H{o}s-R\'{e}nyi model.
 
-The main nodes that will be used as the non-terminal nodes will be selection nodes. These nodes will take a set of nodes and select a subset of those nodes to return to its parent node. One example is the selection criterion that is used in the Erd\H{o}s-R\'{e}nyi model. Every node has a $p$ percent chance of getting selected.  Other selection operations such as k-tournament, proportional selection and others can also be used if there is some measure of the nodes that they can be selected on. This could be the degree of the node or some other property that can be attributed to that node.  Other nodes that will be included are set operation nodes such as union, intersection, and disjoint.  By including selection operations that are taken from current random graph models we are guaranteed to be able to represent those models in the parse tree structure.
+\subsection{Nodes}
+The parse tree will be constructed from a set of operations that will be used as the non-terminal 
+nodes. Sets of vertices which will be used as the terminal nodes in the parse tree.  Each of the operations will take 
+in one or more sets of vertices and return a single set of vertices. The set of vertices returned by the 
+root node will be the set of vertices that the newly created vertex will connect to. 
+An example parse tree can be seen in Figure \ref{fig:example}.
 
-To evaluate these parse trees random graphs will be generated using the method described in the parse tree. The parse trees will be given a fitness value based on how closely the graphs they generate comply with a user defined model. For the experiments that will be constructed, the models will be fairly rudimentary to show a proof of concept. An example of this could be all nodes have an equal or near equal degree and the degree is roughly $\frac{n}{3}$, $n$ being the number of nodes in the graph.  The user can specify the model and the standard deviation away from the model that the random graphs may have. For the fitness function, $k$ graphs at evenly spaced intervals between the min and max graph size of interest will be sampled. The difference at each point will be averaged along with the standard deviation used in a weighted sum to give each parse tree a fitness value.
+There are two primary types of non-terminal operations that are used as nodes in the construction of the parse-tree. The
+first of which are selection operations. These operations take a set of vertices and by some method selects vertices from
+that set and returns them to its parent node. The second type of non-terminal operations are set operations. These nodes 
+typically take two sets of vertices and perform some kind of set operation on the two sets and return the product to its
+parent node. The exact specifications of the operations that were used as nodes can be found below.
 
-The GP will be using standard GP operators along with other operators to help with a local search of the parse trees. The standard GP operators include subtree crossover and subtree mutation. The new operator is an alternate mutation operator which randomly selects a node of the parse tree and randomly changes the parameters of the operation contained in that node.
+\subsubsection{Selection Nodes}
+There are two types of selection nodes that were used to evolve the Random Graph Algorithms. The first of which are standard
+selection operations that have constant values for their parameters. The second are relative selection operations. For this 
+second type of selection operations, the parameter values used are relative to the size of the graph. This addition was made
+so that the Random Grpah Algorithms would create graphs with the same properties as the size of the graph increased substantially. 
+
+In a majority of the selection operations, the vertices are compared to one another to determine selection. When this is the case, 
+they are compared based upon some measure of the node. In the experiments reported in this paper, the only measure that was available
+was the degree of the vertex. This however could be any measure of a node such as its eccentricity or other measures. For these
+selection operations that are based on vertex measures, the selection can be done as a minimization or maximization of that measure. For
+example, the operation could try to select vertices with a high degree or select vertices with a low degree.
+
+For the first type of selection operation, there were four selection operations that were used. The first of which is call `p-Select'.
+This selection operation iterates over the set of vertices that were passed in and has a $p$ probability of selecting each vertex. The
+second selection operation is the standard k-Tournament selection with replacement. This operation has two parameters; one of which is $k$ which
+is the number of vertices to compare each iteration, and $num$ which is the number of vertices selected and passed to its parent node. Note that 
+vertices can be reselected during the selection process, they will not appear multiple times in the sets that are passed to its parent. This 
+is done to insure that the resulting random graphs are simple. The third selection operation is a random sub-set operation. This operation takes 
+a random sub-set of size $n$ from the set passed and returns that set to its parent node. This selection is done without replacement. The fourth 
+selection operation is truncation selection. This operation selects the highest or lowest $n$ vertices based on the measure specified, and passes
+them to its parent node.
+
+The second type of selelction operation is relative selections. There are three selection operations of this type used in the experiments presented
+in this paper. They are the k-Tournament selection, random sub-set selection and truncation selection that were presented earlier. The difference
+in this version of the selection is that each of the parameters of the selection are relative to the size of the graph. An example of the
+relation for k-Tournament's $k$ can be seen in Equation~\ref{eq:example}.
+
+\begin{equation}
+\label{eq:example}
+k_{val} = \floor*{\frac{n}{k_{rel}}}
+\end{equation}
+
+In the above equation, $k_{val}$ is the $k$ value that is used for that run of the k-Tournament function, $n$ is the number of vertices in the graph, and $k_{rel}$
+is a constant parameter value that is associated with that k-Tournament node.
+
+
+\subsubsection{Set Nodes}
+
+The second type of operation that is used in the presented experiments are set operations. All of these operations take two sets of vertices and return
+a single set of vertices to its parent node. There are four set operations that are used in the experiments. The first is the union operation which returns
+the vertices which are in both sets passed in. The second is the intersection which returns the vertices which are in common between the two sets passed in. 
+The third is the difference operation which returns the vertices that are in the left child's set but not in the right child's. The fourth is the symmetric
+difference operation which returns the vertices that are in either the left child's set or the right child's set but not in both. 
+
+
+\subsection{Genetic Program}
+GP is employed to meta-evolve the Random Graph Algorithms. The two primary variation operators employed are the standard sub-tree crossover and the sub-tree
+mutation operator altered to make the maximum number of nodes being added a user defined value. Another mutation operation was added to this algorithm that 
+selects a node at random from the parse tree and randomizes the parameters if it has any; if the node does not have any parameters the mutation is executed again. 
+The parameters are set to a random valued within a specified user range for each nodes parameters. This can also alter the type of measure used in the selection
+operations and if the selections attempt to minimize or maximize the measure. 
+
+\subsubsection{Random Graph Algorithm}
+Each individual in the GP population encodes a Random Graph Algorithm. To evaluate the fitness of an individual its encoded Random Graph Algorithm generates
+a random graph a user-defind number of times. The resulting graphs are generated to be the same size to ensure an accurate fitness. These graphs are evaluated 
+using a user defined fitness function. The fitness of the Random Graph Algorithm is the average fitness of the graphs that it produces. 
+
+The graphs are generated by iteratively executing the parse-tree. Each iteration a single vertex is added to the graph and the parse tree is executed to determine
+which vertices the new vertex will share an edge with. By employing this method, every possible graph is possible to be generated assuming that the right operations 
+are available for the evolution process. 
+
+\subsubsection{Fitness Calculation}
+For the experiments presented in this paper, there were many different fitness functions employed to demonstrate the capabilities of the algorithm that
+is proposed. The primary graph characteristics that were employed for fitness functions were graph partitioning, eccentricity, and the number of edges.  
+Four fitness functions were constructed from these graph characteristics and using during evolution. For each of the functions, it was required that the graph
+be connected. If the graph was not connected the fitness value was set to an arbitrarily small value.
+
+The first fitness function was designed to maximize 
+the edgecut needed to partition the graph into two pieces while minimizing the number of edges in the graph. To approximate the edgecut of the partition,
+the Metis algorithm was used. The edges are minimized to prevent a complete graph from being always evolved. This fitness function can be seen in Equation~\ref{eq:maxMetis}.
+
+\begin{equation}
+\label{eq:maxMetis}
+fitness = c_1E_c - c_2E
+\end{equation}
+
+In the above equation, $c_1$ and $c_2$ are positive weighting constants, $E_c$ is the edge cut of the graph, and $E$ is the number of edges in the graph.
+
+
+The second fitness function was designed to minimize 
+the edgecut needed to partition the graph into two pieces while maximizing the number of edges in the graph. To approximate the edgecut of the partition,
+the Metis algorithm was used. The edges are maximized to prevent an empty graph from always being evolved. This fitness function can be seen in Equation~\ref{eq:minMetis}.
+
+\begin{equation}
+\label{eq:minMetis}
+fitness = -c_1E_c + c_2E
+\end{equation}
+
+In the above equation, $c_1$ and $c_2$ are positive weighting constants, $E_c$ is the edge cut of the graph, and $E$ is the number of edges in the graph.
+
+
+
+The third fitness function was designed to maximize the average eccentricity of a graph while trying to minimize the number of edges. The edges are minimized
+to prevent a complete graph from always being evolved. This fitness function can be seen in in Equation~\ref{eq:maxEccen}.
+
+
+\begin{equation}
+\label{eq:maxEccen}
+fitness = c_1\frac{\sum\limits_{e \in G}\epsilon_{G}(e)}{n} - c_2E
+\end{equation}
+
+In the above equation, $c_1$ and $c_2$ are positive weighting constants, $\epsilon_{G}(e)$ is the eccentricity of edge $e$, and $E$ is the number of edges in the graph.
+
+
+The fourth fitness function was designed to minimize the average eccentricity of a graph while trying to minimize the number of edges. The edges are minimized to 
+prevent a complete graph from always being evolved. This fitness function
+can be seen in in Equation~\ref{eq:minEccen}.
+
+
+\begin{equation}
+\label{eq:minEccen}
+fitness = -c_1\frac{\sum\limits_{e \in G}\epsilon_{G}(e)}{n} - c_2E
+\end{equation}
+
+In the above equation, $c_1$ and $c_2$ are positive weighting constants, $\epsilon_{G}(e)$ is the eccentricity of edge $e$, and $E$ is the number of edges in the graph.
+
+For each of the fitness function parsimony pressure is added to temper the growth of the parse trees. The parsimony pressure is calculated by multiplying the number
+of nodes in a tree by a user defind value. The parsimony pressure is subtracted from fitness calculated by the fitness functions defined.
+
+\subsubsection{External Verification}
+To assure that the performance of the evolved Random Graph Algorithms areconsistent with their performance reported during evolution,
+executable code is generated to represent the parse tree. This is done to externally verify that the performance that the GP shows for a
+given Random Graph Algorithm is accurate when actually implemented. The generated code is used in all of the experiments to ensure unbiased execution 
+of the Random Graph Algorithms.
+
+
+\section{Experimental Setup}
+The goal of this paper was to demonstrate that custom Random Graph Algorithms can be generated using GP. To demonstrate this, Random Graph Algorithms were evolved
+using the four fitness functions described earlier. We then compare the evolved Random Graph Algorithms to pre-existing algorithms to demonstrate the need for new
+Random Graph Algorithms for a user-defined application. Four experiments were conducted to demonstrate that a custom Random Graph Algorithm can be generated to 
+create random graphs that have qualities defined by the fitness function used. Each of the experiments are cunducted five times to demonstrate the ability to 
+consitently evolve high-quality Random Graph Algorithms.
+
+\begin{table}
+    \begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Parameter} &\textbf{Value}\\ \hline
+        Evaluations&5000\\ \hline
+        Initial Population&100\\ \hline
+        Children per Generation&50\\ \hline
+        k-Tournament for Parent Selection&8\\ \hline
+        k-Tournament for Survival Selection&5\\ \hline
+	    Sub-Tree Crossover Probability& 35\% \\ \hline
+	    Sub-Tree Mutation Probability& 35\% \\ \hline
+	    Alternate Mutation Probability& 30\% \\ \hline
+	    Alternate Mutation Depth& 5\\ \hline
+	    Parsimony Pressure & 1\\ \hline
+        Random Graph Algorithm Runs&20\\ \hline
+        Graph Size&300\\ \hline
+    \end{tabular}
+    \end{center}
+\caption{GP Configurations}
+  \label{tab:GP}
+\end{table}
+
+Each of the four experiments will be run using the same parameter settings for the GP algorithm.  
+The GP was run for 5000 evaluations. The initial population
+was 100 individuals and each generation 50 new individuals were created. $k$-tournament selection with replacement 
+and $k=8$ was employed for parent selection. $k$-tournament selection without replacement and $k=5$ was employed for survival selection.
+The sub-tree crossover and mutation operations had 35\% chance of being used
+while the alternate mutation had a probability of 30\%. The parsimony pressure for the tree size was 1.
+Each Random Graph Algorithm was run 20 times during the evolution and generated graphs of size 300. 
+Due to the high computational cost of running the GP, only minimal tuning was feasible. A summary
+of the parameter settings for the GP can be seen in Table~\ref{tab:GP}. A summary of the constant weights used
+in the fitness functions for the experiments can be seen in Table~\ref{tab:fitness}.
+
+
+\begin{table}
+    \begin{center}
+    \begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{Fitness Function} & \textbf{$c_1$} & \textbf{$c_2$} \\ \hline
+    Maximize Edgecut&1 & 2\\ \hline
+    Minimize Edgecut&50& 1 \\ \hline
+    Maximize Average Eccentricity& 50 &1\\ \hline
+    Minimize Average Eccentricity& 50 &1\\ \hline
+    \end{tabular}
+    \end{center}
+    \caption{Constant weight settings for fitness functions}
+    \label{tab:fitness}
+\end{table}
+
+\begin{table}
+    \begin{center}
+    
+
+    \begin{tabular}{|c|c|c|}
+        \hline
+        \textbf{Operation} &\textbf{Parameter}&\textbf{Range/Options}\\ \hline
+        p-Select & $p$ & (0,1.0)\\ \hline \hline
+        k-Tournament Selection & $k$ & (1,50) \\ \hline
+        * & $num$ & (1,50)\\ \hline
+        * & Measure & degree \\ \hline
+        * & Optimization & minimize, maximize \\ \hline \hline
+        Random Subset Selection & $num$ & (1,50) \\ \hline \hline
+        Truncation Selection & $num$ & (1,50) \\ \hline
+        * & Measure & degree \\ \hline
+        * & Optimization & minimize, maximize \\ \hline \hline
+
+        Relative k-Tournament Selection & $k_{rel}$ & (1,50) \\ \hline
+        * & $num_{rel}$ & (1,50)\\ \hline
+        * & Measure & degree \\ \hline
+        * & Optimization & minimize, maximize \\ \hline \hline
+        Relative Random Subset Selection & $num_{rel}$ & (1,50) \\ \hline \hline
+        Relative Truncation Selection & $num_{rel}$ & (1,50) \\ \hline
+        * & Measure & degree \\ \hline
+        * & Optimization & minimize, maximize \\ \hline
+
+    \end{tabular}
+    \end{center}
+\caption{Operation Parameter Ranges}
+    \label{tab:op}
+\end{table}
+
+Each operation that can be used during the evolution of the Random Graph Algorithms has parameters with user-defind ranges. For the `p-select' operation
+the range that its parameter can take is from 0.0 to 1.0. For all other parameters that the other operations use, the range is from 1 to 50 inclusively.
+A summary of the parameter ranges can be seen in Table~\ref{tab:op}.
+
+\section{Results}
+
+\section{Discussion}
+
+\section{Conclusion}
+
+\section{Future Work}
 
 
 
