@@ -331,10 +331,42 @@ A summary of the parameter ranges can be seen in Table~\ref{tab:op}.
 
 \section{Discussion}
 
+
+\subsection{Maximize Partition}
+
+
+\subsection{Minimize Partition}
+
+
+\subsection{Maximize Eccentricity}
+
+
+\subsection{Minimize Eccentricity}
+
+
+
 \section{Conclusion}
+This paper proposed a GP method to evolve Random Graph Algorithms that would create graphs that have a user specified property. As demonstrated
+in the experiments, the GP was able to create Random Graph Algorithms which satisfied the criterea defined by the fitness functions shown. While these
+fitness functions were simple, the results demonstrate that this method can sucessfuly create Random Graph Algorithms that have the user-defined 
+properties of interest. 
+
+It was discovered that while the evaulation method for assigning a fitness to the Random Graph Algorithms is efficient, it does not however provide
+enough evolutionary pressure to ensure that the properties can be found at an arbitrary point during generation. The current evaluation method only 
+provides the probabilistic certainty that the properties of interest exist in the random graphs at the size that they were evolved. A more complex evaluation
+method needs to be constructed to gauge the presence of the desired properties at intermitten times during the creating of the random graph. This will
+help insure that the properties that are desired exist in all graphs generated reguardless of size. 
+
 
 \section{Future Work}
+The first addition that needs to be made to the proposed method is the improved fitness evaluation. This will allow for the GP to create Random Graph
+Algorithms that will be more consistent. The produced Random Graph Algorithms will have a higher likelyhood of having the desired properties at
+graph sizes larger and smaller than the size they were evolved on.
 
+Another proposed addition to this method is adding the capability to evolve Random Directed Graph Algorithms. This will add more applications
+that this method could be applied to. One such application is the generation of control flow graphs that simulate program control flow graphs. Extracting
+control flow graphs from programs is a difficult task and is not very accurate. By creating a Random Directed Graph Algorithm to generate control flow graphs,
+this would give algorithm developers a much larger data set to develop their algorithms on. 
 
 
 \bibliographystyle{abbrv}
