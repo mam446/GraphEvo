@@ -49,7 +49,7 @@ def minEccenEval(state):
         nodeEccentricities = nx.eccentricity(G)
         for node in nodeEccentricities:
             avgEccen += nodeEccentricities[node]
-        avgEccen /= len(state.nodeList)
+        avgEccen /= G.number_of_edges()
         return -50 * avgEccen - G.number_of_edges()
     return -99999999999999999
 
@@ -66,7 +66,7 @@ def maxEccenEval(state):
         nodeEccentricities = nx.eccentricity(G)
         for node in nodeEccentricities:
             avgEccen += nodeEccentricities[node]
-        avgEccen /= len(state.nodeList)
+        avgEccen /= G.number_of_edges()
         return 50 * avgEccen - G.number_of_edges()
     return -99999999999999999
 

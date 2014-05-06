@@ -36,7 +36,21 @@ def connected(state):
 
 
 
-
+def eccentricity(state):
+    G = nx.Graph()
+    for node in xrange(len(state.nodeList)):
+        G.add_node(node)
+        for edge in state.nodeList[node]:
+            G.add_edge(node,edge)
+    if nx.is_connected(G):
+        avgEccen = 0.0
+        nodeEccentricities = nx.eccentricity(G)
+        for node in nodeEccentricities:
+            avgEccen += nodeEccentricities[node]
+        avgEccen /= G.number_of_edges()
+        return avgEccen 
+    else:
+        return 0
 
 
 
