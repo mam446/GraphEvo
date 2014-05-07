@@ -69,6 +69,8 @@ while cur<maxEvals:
             c+=1
         else:
             x = ktourn(pop,k).altMutate()
+            if not x:
+                continue
             x.evaluate()
             childs.append(x)
             c+=1

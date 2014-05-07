@@ -244,7 +244,7 @@ class parseTree:
 
     def mutate(self):
         x = self.duplicate()
-        n = x.randomNode(True)
+        n = x.randomNode()
         
         x.createRandom(n)
         x.update()
@@ -267,6 +267,7 @@ class parseTree:
             else:
                 yp.down[1] = xn
         else:
+            print "root"
             y.root = xn
 
         if xp is not None:
@@ -275,6 +276,7 @@ class parseTree:
             else:
                 xp.down[1] = yn
         else:
+            print "root"
             x.root = yn
 
         xn.parent = yp
@@ -289,7 +291,18 @@ class parseTree:
     def randomNode(self,inc=False):
         z = []
         popNodes(self.root,z)
-        n = random.choice(z)
+        p = {}
+        i = 0
+        if not inc:
+            n = random.choice(z)
+            return n 
+        
+        while not p:
+            n = random.choice(z)
+            p = n.params
+            if i> len(z):
+                return None
+            i+=1 
         return n
 
 
@@ -307,11 +320,12 @@ class parseTree:
         i = 0
         while not t:
             n =x.randomNode(True)
+            if not n:
+                return None
             t = n.params
             i+=1
             if i> self.size:
-                n = self.root
-                break
+                return None 
         n.randomize()
         x.update()        
         return x

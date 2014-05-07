@@ -22,6 +22,13 @@ def edges(state):
 
 
 
+def connected(state):
+    G = nx.Graph()
+    for node in xrange(len(state.nodeList)):
+        G.add_node(node)
+        for edge in state.nodeList[node]:
+            G.add_edge(node,edge)
+    return nx.is_connected(G) 
 
 
 
