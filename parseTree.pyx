@@ -333,7 +333,7 @@ class parseTree:
         val = 'x'
         s = 'strict digraph { \n ordering=out; node[label=\"\\N\"];\n'
         s+=getEdge(self.root,val)
-        s+="\n}"
+        s+="}"
         f = open(outdir+self.name+'.dot','w')
         f.write(s)
         f.close()
