@@ -267,7 +267,6 @@ class parseTree:
             else:
                 yp.down[1] = xn
         else:
-            print "root"
             y.root = xn
 
         if xp is not None:
@@ -276,7 +275,6 @@ class parseTree:
             else:
                 xp.down[1] = yn
         else:
-            print "root"
             x.root = yn
 
         xn.parent = yp
@@ -333,7 +331,7 @@ class parseTree:
 
     def makeGraph(self, outdir=''):
         val = 'x'
-        s = 'strict digraph { \n ordering=out; node[label=\"\\N\"];\n '
+        s = 'strict digraph { \n ordering=out; node[label=\"\\N\"];\n'
         s+=getEdge(self.root,val)
         s+="\n}"
         f = open(outdir+self.name+'.dot','w')
@@ -347,10 +345,10 @@ class parseTree:
 def getEdge(node,val):
     s = ""
     if not node.parent:
-        s+= val+"  [color=goldenrod2,\n label = \""+node.toStr()+"\",\n style=filled];"
+        s+= val+"  [color=goldenrod2,\n  label = \""+node.toStr()+"\",\n  style=filled];\n"
 
     for i in xrange(len(node.down)):
-        s+= val+str(i+1)+"   [color=goldenrod2,\n  label =\""+node.down[i].toStr()+"\",\n style=filled];\n"
+        s+= val+str(i+1)+"  [color=goldenrod2,\n  label =\""+node.down[i].toStr()+"\",\n  style=filled];\n"
         s+="  "+val+" -> "+val+str(i+1)+';\n'
         s+=getEdge(node.down[i],val+str(i+1))
     return s
