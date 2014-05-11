@@ -80,19 +80,38 @@ def maxClustEval(state):
         return 100000 * nx.average_clustering(G) - G.number_of_edges()
     return REALLY_BAD
 
-def resilientEval(state, failureRatio=0.1):
-    G = state
-    if type(G) is not nx.classes.graph.Graph:
+def resilNodeEval(state, failureRatio=0.1):
+    if type(state) is not nx.classes.graph.Graph:
         G = nx.Graph()
         for node in xrange(len(state.nodeList)):
             G.add_node(node)
             for edge in state.nodeList[node]:
                 G.add_edge(node,edge)
+    else:
+        G = state.copy()
     if nx.is_connected(G):
         numEdges = G.size()
         numFails = int(G.order() * failureRatio)
         for _ in xrange(numFails):
             G.remove_node(choice(G.nodes()))
+        possibleEdges = G.order() * (G.order() + 1) / 2
+        return (1000.0 * len(nx.connected_components(G)[0]) / G.order()) - (2000.0 * G.size() / possibleEdges)
+    return REALLY_BAD
+
+def resilEdgeEval(state, failureRatio=0.1):
+    if type(state) is not nx.classes.graph.Graph:
+        G = nx.Graph()
+        for node in xrange(len(state.nodeList)):
+            G.add_node(node)
+            for edge in state.nodeList[node]:
+                G.add_edge(node,edge)
+    else:
+        G = state.copy()
+    if nx.is_connected(G):
+        numEdges = G.size()
+        numFails = int(G.size() * failureRatio)
+        for _ in xrange(numFails):
+            G.remove_edge(*choice(G.edges()))
         possibleEdges = G.order() * (G.order() + 1) / 2
         return (1000.0 * len(nx.connected_components(G)[0]) / G.order()) - (2000.0 * G.size() / possibleEdges)
     return REALLY_BAD
@@ -104,6 +123,7 @@ funcs['maxMetis'] = maxMetisEval
 funcs['minEccen'] = minEccenEval
 funcs['maxEccen'] = maxEccenEval
 funcs['maxClust'] = maxClustEval
-funcs['resilient'] = resilientEval
+funcs['resilNode'] = resilNodeEval
+funcs['resilEdge'] = resilEdgeEval
 
 

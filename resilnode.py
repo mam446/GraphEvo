@@ -14,7 +14,7 @@
         'runs':20,
         'penalty':1,
         'maxSize':300,
-        'fitness':'resilient'
+        'fitness':'resilNode'
     },
     'nodeSettings':
     {
