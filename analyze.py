@@ -4,16 +4,13 @@ import fitnessFunction
 import analysis
 import pylab
 import matplotlib.pyplot as plt
-import networkx as nx
 import argparse
-from random import choice
 
 parser = argparse.ArgumentParser()
 parser.add_argument('program', metavar='path/to/programName', help='name of the program to evaluate')
 parser.add_argument('runs', default=30, help='number of runs to perform', type=int)
 parser.add_argument('size', default=300, help='number of nodes in generated graphs', type=int)
 parser.add_argument('evaluator', default='minMetis', help='name of fitness evaluation method')
-parser.add_argument('-c', '--compare', default='gnm', metavar='randomGraphName', help='compare to specified random graph')
 args = parser.parse_args()
 
 if args.program.find('/') != -1:
@@ -25,19 +22,14 @@ trend_aveDegree = [0 for i in xrange(args.size)]
 trend_edges = [0 for i in xrange(args.size)]
 trend_edgecut = [0 for i in xrange(args.size)]
 trend_connectivity = [0 for i in xrange(args.size)]
+trend_resilNode = [0 for i in xrange(args.size)]
+trend_resilEdge = [0 for i in xrange(args.size)]
 trend_fitness = [0.0 for i in xrange(args.size)]
 
 degreeData= []
-compDegreeData = []
-
 aveEdgeCut = 0.0
-compAveEdgeCut = 0.0
-
 edges = 0.0
-compEdges = 0.0
-
 fitness = 0.0
-compFitness = 0.0
 
 s = None
 for i in xrange(args.runs):
@@ -52,6 +44,8 @@ for i in xrange(args.runs):
         trend_edges[j]+=analysis.edges(s)
         trend_edgecut[j]+=analysis.eccentricity(s)
         trend_connectivity[j]+=analysis.connected(s)
+        trend_resilNode[j] += analysis.resilNode(s)
+        trend_resilEdge[j] += analysis.resilEdge(s)
 
         val = fitnessFunction.funcs[args.evaluator](s)*trend_connectivity[j]
         if val >-1000000:
@@ -61,20 +55,6 @@ for i in xrange(args.runs):
     aveEdgeCut+=analysis.edgeCut(s)
     numEdges = analysis.edges(s)
     edges+=numEdges
-
-    # Compare to random graph model
-    if args.compare:
-        if args.compare == 'gnm':
-            randomGraph = nx.gnm_random_graph(args.size, numEdges)
-        else: # Stay tuned for more!
-            randomGraph = nx.gnm_random_graph(args.size, numEdges)
-        while not nx.is_connected(randomGraph): # Have to add edges to connect the graph
-            components = nx.connected_components(randomGraph)
-            randomGraph.add_edge(choice(components[0]), choice(components[1]))
-        compFitness += fitnessFunction.funcs[args.evaluator](randomGraph)
-        compDegreeData.extend(nx.degree(randomGraph).values())
-        compAveEdgeCut += analysis.edgeCut(randomGraph)
-        compEdges += numEdges
 
 edges/=args.runs
 fitness/=args.runs
@@ -88,12 +68,16 @@ trend_edges = map(ave,trend_edges)
 trend_edgecut = map(ave,trend_edgecut)
 trend_connectivity = map(ave,trend_connectivity)
 trend_fitness = map(ave,trend_fitness)
+trend_resilNode = map(ave, trend_resilNode)
+trend_resilEdge = map(ave, trend_resilEdge)
 
 ad = open(sys.argv[1][:-4]+"aveDeg.dat",'w')
 ed = open(sys.argv[1][:-4]+"edge.dat",'w')
 ec = open(sys.argv[1][:-4]+"edgecut.dat",'w')
 con = open(sys.argv[1][:-4]+"connect.dat",'w')
 fit = open(sys.argv[1][:-4]+"fitness.dat",'w')
+rnode = open(sys.argv[1][:-4]+"resilnode.dat",'w')
+redge = open(sys.argv[1][:-4]+"resiledge.dat",'w')
 
 for i in xrange(args.size):
     ad.write(str(i)+","+str(trend_aveDegree[i])+"\n")
@@ -101,6 +85,8 @@ for i in xrange(args.size):
     ec.write(str(i)+","+str(trend_edgecut[i])+"\n")
     con.write(str(i)+","+str(trend_connectivity[i])+"\n")
     fit.write(str(i)+","+str(trend_fitness[i])+"\n")
+    rnode.write(str(i)+","+str(trend_resilNode[i])+"\n")
+    redge.write(str(i)+","+str(trend_resilEdge[i])+"\n")
 ad.close()
 ed.close()
 ec.close()
@@ -150,24 +136,15 @@ n,bins,patches = plt.hist(degreeData,1+max(degreeData)-min(degreeData),histtype=
 plt.setp(patches,'facecolor','g','alpha',0.75)
 plt.ylim([0,max(n)])
 ax5.set_title('Degree Distribution')
+
+ax6 = plt.subplot(327)
+plt.plot(x, trend_resilNode, 'k')
+ax6.set_title('Node Resilience')
+
+ax7 = plt.subplot(328)
+plt.plot(x, trend_resilEdge, 'k')
+ax7.set_title('Edge Resilience')
+
 plt.savefig(sys.argv[1]+"analysis.png")
 plt.show()
-
-if args.compare:
-    compEdges /= args.runs
-    compFitness /= args.runs
-    compAveEdgeCut /= args.runs
-    compAveDegree = sum(compDegreeData)/float(len(compDegreeData))
-
-    print "Random Graph Comparison"
-    print "Nodes: ",args.size
-    print "Fitness: ",compFitness
-    print "EdgeCut: ",compAveEdgeCut
-    print "Edges: ", compEdges
-    print "Ave Degree: ",compAveDegree
-    print
-    n,bins,patches = pylab.hist(compDegreeData,1+max(compDegreeData)-min(compDegreeData),histtype='stepfilled')
-    pylab.setp(patches,'facecolor','g','alpha',0.75)
-    pylab.ylim([0,max(n)])
-    pylab.show()
 
