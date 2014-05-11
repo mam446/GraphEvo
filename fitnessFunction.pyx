@@ -1,6 +1,6 @@
 import networkx as nx
 import metis
-from random import choice
+from random import choice, sample
 
 REALLY_BAD = -99999999999999999.0
 
@@ -92,8 +92,7 @@ def resilNodeEval(state, failureRatio=0.1):
     if nx.is_connected(G):
         numEdges = G.size()
         numFails = int(G.order() * failureRatio)
-        for _ in xrange(numFails):
-            G.remove_node(choice(G.nodes()))
+        G.remove_nodes_from(sample(G.nodes(), numFails))
         possibleEdges = G.order() * (G.order() + 1) / 2
         return (1000.0 * len(nx.connected_components(G)[0]) / G.order()) - (2000.0 * G.size() / possibleEdges)
     return REALLY_BAD
@@ -110,8 +109,7 @@ def resilEdgeEval(state, failureRatio=0.1):
     if nx.is_connected(G):
         numEdges = G.size()
         numFails = int(G.size() * failureRatio)
-        for _ in xrange(numFails):
-            G.remove_edge(*choice(G.edges()))
+        G.remove_edges_from(sample(G.edges(), numFails))
         possibleEdges = G.order() * (G.order() + 1) / 2
         return (1000.0 * len(nx.connected_components(G)[0]) / G.order()) - (2000.0 * G.size() / possibleEdges)
     return REALLY_BAD

@@ -1,6 +1,6 @@
 import networkx as nx
 import metis
-from random import choice
+from random import choice, sample
 
 
 def edgeCut(state,partitions=2):
@@ -46,8 +46,7 @@ def resilNode(state, failureRatio=0.1):
     else:
         G = state.copy()
     numFails = int(G.order() * failureRatio)
-    for _ in xrange(numFails):
-        G.remove_node(choice(G.nodes()))
+    G.remove_nodes_from(sample(G.nodes(), numFails))
     return float(len(nx.connected_components(G)[0])) / G.order()
 
 def resilEdge(state, failureRatio=0.1):
@@ -61,8 +60,7 @@ def resilEdge(state, failureRatio=0.1):
     else:
         G = state.copy()
     numFails = int(G.size() * failureRatio)
-    for _ in xrange(numFails):
-        G.remove_edge(*choice(G.edges()))
+    G.remove_edges_from(sample(G.edges(), numFails))
     return float(len(nx.connected_components(G)[0])) / G.order()
 
 def eccentricity(state):
