@@ -110,40 +110,40 @@ fig = plt.figure(1)
 
 fig.subplots_adjust(hspace=.5)
 
-ax1 = plt.subplot(321)
+ax1 = plt.subplot(331)
 plt.plot(x,trend_aveDegree,'k')
 ax1.set_title('Average Degree')
 
 
-ax2 = plt.subplot(322)
+ax2 = plt.subplot(332)
 plt.plot(x,trend_edges,'k')
 ax2.set_title('Edges')
 
-ax3 = plt.subplot(323)
+ax3 = plt.subplot(333)
 plt.plot(x,trend_edgecut,'k')
 ax3.set_title('Eccentricity')
 
-ax4 = plt.subplot(324)
+ax4 = plt.subplot(334)
 plt.plot(x,trend_connectivity,'k')
 ax4.set_title('Connectivity Probability')
 
-ax4 = plt.subplot(325)
+ax6 = plt.subplot(335)
+plt.plot(x, trend_resilNode, 'k')
+ax6.set_title('Node Resilience')
+
+ax7 = plt.subplot(336)
+plt.plot(x, trend_resilEdge, 'k')
+ax7.set_title('Edge Resilience')
+
+ax4 = plt.subplot(337)
 plt.plot(x,trend_fitness,'k')
 ax4.set_title('Fitness')
 
-ax5 = plt.subplot(326)
+ax5 = plt.subplot(338)
 n,bins,patches = plt.hist(degreeData,1+max(degreeData)-min(degreeData),histtype='stepfilled')
 plt.setp(patches,'facecolor','g','alpha',0.75)
 plt.ylim([0,max(n)])
 ax5.set_title('Degree Distribution')
-
-ax6 = plt.subplot(327)
-plt.plot(x, trend_resilNode, 'k')
-ax6.set_title('Node Resilience')
-
-ax7 = plt.subplot(328)
-plt.plot(x, trend_resilEdge, 'k')
-ax7.set_title('Edge Resilience')
 
 plt.savefig(sys.argv[1]+"analysis.png")
 plt.show()
